@@ -1,21 +1,38 @@
-This folder contain some test with two differents types of robots, Crabot and Quadratot.
+This folder contain some test with many differents types of robots, Argo, Crabot and Quadratot.
 
 For run any program of this folder you must follow the following steps:
 
--Compile and install the libraries used in the tests:
+-Compile and install the RobotLIB library used in the tests:
 
-In HyperNeat folder:
+RobotLib:
 
 ```
+$ cd ../RobotLIB
 $ make
 $ sudo make install
 ```
 
-In RobotLib folder:
+-Download, compile and install the others libraries used in the tests:
+
+NEAT:
 
 ```
+$ cd ../..
+$ git clone https://github.com/mjescobar/NEAT.git
+$ cd NEAT
 $ make
 $ sudo make install
+$ cd ..
+```
+
+HyperNeat:
+
+```
+$ git clone https://github.com/mjescobar/HyperNEAT.git
+$ cd HyperNEAT
+$ make
+$ sudo make install
+$ cd ..
 ```
 
 -Compile the program to be executed  in the respective folder:
