@@ -20,7 +20,7 @@ NEAT:
 
 ```
 $ cd ../..
-$ git clone https://github.com/mjescobar/NEAT.git
+$ git clone https://github.com/mjescobar/NEAT/tree/NEATSpikes
 $ cd NEAT
 $ make
 $ sudo make install
