@@ -12,8 +12,6 @@ Fitness::Fitness()
 	frecuency = 0;
 	final_fitness = FAILED_FITNESS;
 	distance = 0;
-	distance_penalization = 0;
-	penalized_distance = 0;
 }
 
 Fitness::~Fitness()
@@ -66,12 +64,11 @@ double Fitness::calcFitness()
 			clog << "JDCNS " << i << ":\t" << jdcns.at(i) << endl; 
 		
 		vector < double > freq ((int)(N_LEGS + GRA_LIB_EXT),0.0);
-		vector < double > distp ((int)(N_LEGS + GRA_LIB_EXT),0.0);
 
 		for(int i = 0; i < N_LEGS; i++)
-			freq.at(i) = (double)(jdcns.at(i)/GRA_LIB)/(TIME_SIMULATION - TIME_INIT_MEASURING);
+			freq.at(i) = FREQUENCY_FITNESS((double)(jdcns.at(i)/GRA_LIB)/(TIME_SIMULATION - TIME_INIT_MEASURING));
 
-		freq.back() = (double)jdcns.back()/(TIME_SIMULATION - TIME_INIT_MEASURING);
+		freq.back() = FREQUENCY_FITNESS((double)jdcns.back()/(TIME_SIMULATION - TIME_INIT_MEASURING));
 
 		clog << endl << endl;
 		for(int i = 0; i < (int)N_LEGS; i++)
@@ -82,11 +79,13 @@ double Fitness::calcFitness()
 		distance = sqrt(pow(final_location[0]- initial_location[0],2) + pow(final_location[1]- initial_location[1],2));
 
 		fitness.at(0) = DISTANCE_FITNESS(distance);
-		fitness.at(1) = FREQUENCY_FITNESS(frecuency);
+		fitness.at(1) = frecuency;
 		final_fitness = min(fitness);
 
+		clog << endl << "dist:\t" << fitness.at(0) << "\tfreq:\t" << fitness.at(1) << "\tmin:\t" << final_fitness << endl;
+
 		generation_frecuency.push_back(frecuency);
-		generation_fitness.push_back(fitness);			
+		generation_fitness.push_back(final_fitness);		
 	}
 	else final_fitness = FAILED_FITNESS;
 
@@ -102,8 +101,6 @@ void Fitness::resetPopulationValues()
 	frecuency = 0;
 	final_fitness = FAILED_FITNESS;
 	distance = 0;
-	distance_penalization = 0;
-	penalized_distance = 0;
 	robot_position.clear();
 }
 
@@ -128,16 +125,6 @@ double Fitness::getDistance()
 	return distance;
 }
 
-double Fitness::getDistancePenalization()
-{
-	return distance_penalization;
-}
-
-double Fitness::getPenalizedDistance()
-{
-	return penalized_distance;
-}
-
 vector < double > Fitness::getGenerationFrecuency()
 {
 	return generation_frecuency;
@@ -150,7 +137,7 @@ vector < double > Fitness::getGenerationFitness()
 
 double Fitness::getFrecuencyThreshold()
 {
-	return PERFECT_FRECUENCY*(1 + FRECUENCY_TOLERANCE);
+	return PERFECT_FRECUENCY;
 }
 
 double Fitness::getJointDirectionChangeNumber()

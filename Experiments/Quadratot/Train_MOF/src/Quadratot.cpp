@@ -175,8 +175,6 @@ int main(int argc, char* argv[])
 					clog << "Joint direction change number: " << fitness->getJointDirectionChangeNumber() << endl;
 					clog << "Joint distance change number frecuency: " << fitness->getFrecuency() << endl;
 					clog << "Traveled distance : " << fitness->getDistance() << endl;
-					clog << "Distance penalization : " << fitness->getDistancePenalization() << endl;
-					clog << "Penalized distance : " << fitness->getPenalizedDistance() << endl;
 					clog << "Fitness: " << fitness->getFitness() << endl;
 
 					simfile->addFileResults(fitness, g, p);				

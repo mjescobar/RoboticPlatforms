@@ -38,8 +38,6 @@ class Fitness
 	double frecuency;
 	double final_fitness;
 	double distance;
-	double distance_penalization;
-	double penalized_distance;
 
 	vector < double * > robot_position;
 	vector < double > generation_frecuency;
@@ -57,8 +55,6 @@ public:
 	double getFrecuency();
 	double getFitness();
 	double getDistance();
-	double getDistancePenalization();
-	double getPenalizedDistance();
 	vector < double > getGenerationFrecuency();
 	vector < double > getGenerationFitness();
 	double getFrecuencyThreshold();
