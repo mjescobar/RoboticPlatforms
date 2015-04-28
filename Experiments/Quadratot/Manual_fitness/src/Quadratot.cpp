@@ -104,16 +104,21 @@ int main(int argc, char* argv[])
 
 	// ================================================ //
 
+	bool repetition = false;
+	int organism = 0;
+
 	for(int i = 0; i < organism_generation; i++)
 	{
-		int organism;
-
-		if(organism_number.size() < 1)
+		if(!repetition)
 		{
-			clog << "Exist no more organisms in this generation" << endl;
-			return(0);
+			if(organism_number.size() < 1)
+			{
+				clog << "Exist no more organisms in this generation" << endl;
+				return(0);
+			}else
+				organism = rand()%organism_number.size();
 		}else
-			organism = rand()%organism_number.size();
+			repetition = false;	
 
 		if (simulator->simGetConnectionId() != -1)
 		{	
@@ -191,9 +196,18 @@ int main(int argc, char* argv[])
 			simfile->closeRobotPositionFile();
 
 			int fitness;
-			clog << "Enter the fitness of the simulation:" << endl;
-			cin >> fitness;
+
+			clog << "Enter '-1' if you want repeat the simulation, or" << endl;
+			clog << "Enter the fitness of the simulation between 1 and 100:" << endl;
+			cin >> fitness;			
 			cin.ignore(256,'\n');
+
+			if(fitness < 0)
+			{
+				repetition = true;
+				i--;
+				continue;
+			}
 
 			simfile->addFitnessToFile(generation, organism_number.at(organism), fitness);
 
