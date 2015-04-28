@@ -6,6 +6,7 @@ LDFLAGS = -lpthread -L. -lhyperneat -lrobotlib -lboost_system -lboost_filesystem
 
 all: Quadratot.o CalcFunctions.o Fitness.o SimFiles.o
 	@mkdir -p saveTrains
+	@mkdir -p bin
 	@echo "Linking all objects to ./bin/Quadratot"
 	@$(CC) $(CFLAGS) ./objects/Fitness.o ./objects/SimFiles.o ./objects/CalcFunctions.o ./objects/Quadratot.o -o ./bin/$(EXECUTABLE) $(LDFLAGS)
 
@@ -30,7 +31,7 @@ SimFiles.o: SimFiles.cpp
 	@$(CC) $(CFLAGS) -c ./src/SimFiles.cpp -o ./objects/SimFiles.o
 
 clean:
-	@rm -f ./bin/$(EXECUTABLE)
+	@rm -f -R ./bin
 	@rm -f -R ./objects
 
 
