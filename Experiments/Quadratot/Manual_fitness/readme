@@ -1,0 +1,2 @@
+In the folder saveTrains (it's generated with make command) you must copy the folders that contains the train result (e.g. "/my_train")
+The train result folder must contain the NEAT organism folder called "NEAT_organisms" with all organism generated of the previous train, and the hyperneat_def, user_def and geneticencoding file.
