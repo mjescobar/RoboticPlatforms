@@ -16,18 +16,16 @@ using namespace std;
 
 #define PERFECT_FRECUENCY WAVE_FRECUENCY*2.0
 #define FRECUENCY_TOLERANCE 0.25
-
+#define DISTANCE_OBJETIVE 1.1
 //frequency fitness_1
 //#define FREQUENCY_FITNESS(X) (double)exp(PERFECT_FRECUENCY -X)
 
 //frequency fitness_2
-#define AMPLITUDE (double)(1.0 + FRECUENCY_TOLERANCE)
-#define GAUSSIAN_STDD 1.0
-#define FREQUENCY_FITNESS(X) (double)(exp(-pow((X - PERFECT_FRECUENCY)/GAUSSIAN_STDD, 2.0)/2.0)*AMPLITUDE)
+#define AMPLITUDE (double)(10.0)
+#define GAUSSIAN_STDD 0.5
+#define FREQUENCY_FITNESS(X) (double)(exp(-pow((X - PERFECT_FRECUENCY)/GAUSSIAN_STDD, 2.0)/2.0)*AMPLITUDE/sqrt(2*M_PI*GAUSSIAN_STDD*GAUSSIAN_STDD) + 0.000001)
 
-//distance fitness
-
-#define DISTANCE_FITNESS(X) (double)(pow(2.0,pow(X,2.0)) - 1 + FITNESS_BASE)
+#define DISTANCE_FITNESS(X) (double)(exp(-pow((X - DISTANCE_OBJETIVE)/GAUSSIAN_STDD, 2.0)/2.0)*AMPLITUDE/sqrt(2*M_PI*GAUSSIAN_STDD*GAUSSIAN_STDD) + 0.000001)
 
 class Fitness
 {
