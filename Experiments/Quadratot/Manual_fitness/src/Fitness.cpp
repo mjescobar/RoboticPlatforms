@@ -6,10 +6,7 @@
 Fitness::Fitness()
 {
 	jdcn = 0;
-	frecuency = 0;
-	fitness = FAILED_FITNESS;
-	distance = 0;
-	penalized_distance = 0;
+	jdcns = vector < int > ((int)(N_LEGS + GRA_LIB_EXT),0);
 }
 
 Fitness::~Fitness()
@@ -19,101 +16,57 @@ Fitness::~Fitness()
 
 void Fitness::measuringValues(vector < Joint * > joints, Dummy * dummy)
 {
-	double position[3];
+	double * position = new double[3];
 
 	dummy->getPosition(-1, position);
 	
-	double * aux = new double[3];
+	robot_position.push_back(position);
 
-	for(int i = 0; i < 3 ; i++)
-		aux[i] = position[i];
-
-	robot_position.push_back(aux);
-
-	for(int i = 0; i < (int)joints.size(); i++)
+	for(int i = 0; i < (int)joints.size()-1; i++)
 		if(joints.at(i)->getJointChangeDirection())
+		{
+			jdcns.at(i%4)++;
 			jdcn++;
-}
+		}
 
-double Fitness::calcFitness()
-{	
-	if(jdcn != 0)
+	if(joints.back()->getJointChangeDirection())
 	{
-		double * final_location = robot_position.back();
-		double * initial_location = robot_position.front();
-				
-		frecuency = (double)(jdcn/(N_LEGS*GRA_LIB + GRA_LIB_EXT))/(TIME_SIMULATION - TIME_INIT_MEASURING);		
-		distance = sqrt(pow(final_location[0]- initial_location[0],2) + pow(final_location[1]- initial_location[1],2));
-		penalized_distance = distance*F_DISTANCE_PENALIZATION(frecuency);
-		fitness = FITNESS_FUNCTION(penalized_distance);
-		generation_frecuency.push_back(frecuency);
-		generation_fitness.push_back(fitness);
-
+		jdcns.back()++;
+		jdcn++;
 	}
-	else fitness = FAILED_FITNESS;
-
-	return fitness;		
 }
 
-void Fitness::resetPopulationValues()
+void Fitness::resetValues()
 {
 	jdcn = 0;
-	frecuency = 0;
-	fitness = FAILED_FITNESS;
-	distance = 0;
-	penalized_distance = 0;
+	jdcns = vector < int > ((int)(N_LEGS + GRA_LIB_EXT),0);
+
 	robot_position.clear();
 }
 
-void Fitness::resetGenerationValues()
+vector < double > Fitness::getFrecuency()
 {
-	generation_fitness.clear();
-	generation_frecuency.clear();
-}
+	vector < double > freq ((int)(N_LEGS + GRA_LIB_EXT),0.0);
 
-double Fitness::getFrecuency()
-{
-	return frecuency;
-}
+	for(int i = 0; i < N_LEGS; i++)
+			freq.at(i) = (double)(jdcns.at(i)/GRA_LIB)/(TIME_SIMULATION - TIME_INIT_MEASURING);
 
-double Fitness::getFitness()
-{
-	return fitness;
+	freq.back() = (double)jdcns.back()/(TIME_SIMULATION - TIME_INIT_MEASURING);
+
+	return freq;
 }
 
 double Fitness::getDistance()
 {
-	return distance;
-}
+	double * final_location = robot_position.back();
+	double * initial_location = robot_position.front();
 
-double Fitness::getDistancePenalization()
-{
-	return F_DISTANCE_PENALIZATION(frecuency);
-}
-
-double Fitness::getPenalizedDistance()
-{
-	return penalized_distance;
-}
-
-vector < double > Fitness::getGenerationFrecuency()
-{
-	return generation_frecuency;
-}
-
-vector < double > Fitness::getGenerationFitness()
-{
-	return generation_fitness;
+	return sqrt(pow(final_location[0]- initial_location[0],2) + pow(final_location[1]- initial_location[1],2));
 }
 
 double Fitness::getFrecuencyThreshold()
 {
-	return PERFECT_FRECUENCY*(1 + FRECUENCY_TOLERANCE);
-}
-
-double Fitness::getJointDirectionChangeNumber()
-{
-	return jdcn;
+	return PERFECT_FRECUENCY;
 }
 
 #endif

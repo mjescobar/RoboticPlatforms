@@ -81,7 +81,7 @@ void RobotSimulator::simGetObjectHandle(char name[], int * handle, simxInt opera
 
 void RobotSimulator::simGetObjectPosition(int object_handle, int relativeTo, double * position, simxInt operationMode)
 {
-	float aux[3];
+	float * aux = new float[3];
 
 	int error = simxGetObjectPosition(clientID, object_handle, relativeTo, aux, operationMode);
 	if(error != 0) vrep_error << "simxGetObjectPosition - " << object_handle << " : "<< error << endl;
@@ -92,7 +92,7 @@ void RobotSimulator::simGetObjectPosition(int object_handle, int relativeTo, dou
 
 void RobotSimulator::simGetObjectVelocity(int object_handle, double * velocity, simxInt operationMode)
 {
-	float aux[3];
+	float * aux = new float[3];
 
 	int error = simxGetObjectVelocity(clientID, object_handle, aux, NULL, operationMode);
 	if(error != 0) vrep_error << "simxGetObjectVelocity - " << object_handle << " : "<< error << endl;
@@ -103,7 +103,7 @@ void RobotSimulator::simGetObjectVelocity(int object_handle, double * velocity, 
 
 void RobotSimulator::simGetObjectOrientation(int object_handle, int relativeTo, double * orientation, simxInt operationMode)
 {
-	float aux[3];
+	float * aux = new float[3];
 
 	int error = simxGetObjectOrientation(clientID,object_handle, relativeTo, aux, operationMode);
 	if(error != 0) vrep_error << "simxGetObjectOrientation - " << object_handle << " : "<< error << endl;

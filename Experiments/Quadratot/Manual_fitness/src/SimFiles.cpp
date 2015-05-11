@@ -32,6 +32,27 @@ void SimFiles::addFitnessToFile(int generation, int population, int fitness)
 	file_fitness << generation << "\t" << population << "\t" << fitness << endl;	
 }
 
+void SimFiles::openInputFitnessFile()
+{
+	stringstream filename;
+	filename << folder_path << "/input_fitness.txt";
+	file_input_fitness.open((char*)filename.str().c_str(), fstream::in | fstream::app);
+}
+
+void SimFiles::closeInputFitnessFile()
+{
+	file_input_fitness.close();
+}
+
+void SimFiles::addiInputFitnessToFile(int generation, int population, Fitness * fitness)
+{
+	vector < double > freq(fitness->getFrecuency());
+	file_input_fitness << generation << "\t" << population << "\t" << fitness->getDistance() << "\t" << fitness->getFrecuencyThreshold();	
+	for(int i = 0; i < (int)freq.size(); i++)
+		file_input_fitness << "\t" << freq.at(i);
+	file_input_fitness << endl;
+}
+
 void SimFiles::openNewJointsPositionFile(int generation, int population)
 {
 	stringstream path0, path1, path2, path3;

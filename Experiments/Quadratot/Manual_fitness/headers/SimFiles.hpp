@@ -9,6 +9,7 @@
 #include <boost/filesystem.hpp>
 #include <ROBOTLIB>
 #include "CalcFunctions.hpp"
+#include "Fitness.hpp"
 
 using namespace ANN_USM;
 using namespace std;
@@ -23,6 +24,7 @@ class SimFiles
 	ofstream file_joints_force;
 
 	ofstream file_fitness;
+	ofstream file_input_fitness;
 
 	char * folder_path;
 
@@ -34,6 +36,10 @@ public:
 	void openFitnessFile();
 	void closeFitnessFile();
 	void addFitnessToFile(int generation, int population, int fitness);
+
+	void openInputFitnessFile();
+	void closeInputFitnessFile();
+	void addiInputFitnessToFile(int generation, int population, Fitness * fitness);
 
 	void openNewJointsPositionFile(int generation, int population);
 	void closeJointsPositionFile();

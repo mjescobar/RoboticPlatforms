@@ -19,9 +19,11 @@ int main(int argc, char* argv[])
 	srand (time(0));
 
 	SimFiles * simfile = new SimFiles(argv[1]); 
+	Fitness * fitness_object = new Fitness();
 	RobotSimulator * simulator = new RobotSimulator();
 
 	simfile->openFitnessFile();
+	simfile->openInputFitnessFile();
 
 	if(argc < 4)
 	{
@@ -120,6 +122,8 @@ int main(int argc, char* argv[])
 		}else
 			repetition = false;	
 
+		fitness_object->resetValues();
+
 		if (simulator->simGetConnectionId() != -1)
 		{	
 			double sim_time = 0;					
@@ -179,6 +183,8 @@ int main(int argc, char* argv[])
 
 					if(sim_time > TIME_INIT_MEASURING)
 					{
+						fitness_object->measuringValues(joints, center_dummy);
+
 						simfile->addFileJointsPosition(joints, sim_time);
 						simfile->addFileRobotPosition(center_dummy, sim_time);
 					}							
@@ -210,6 +216,7 @@ int main(int argc, char* argv[])
 			}
 
 			simfile->addFitnessToFile(generation, organism_number.at(organism), fitness);
+			simfile->addiInputFitnessToFile(generation, organism_number.at(organism), fitness_object);
 
 			stringstream new_organism_filename;
 			new_organism_filename << organism_filename.at(organism) << "_VIEWED";
@@ -228,9 +235,11 @@ int main(int argc, char* argv[])
 	simulator->simFinish();
 
 	simfile->closeFitnessFile();
+	simfile->closeInputFitnessFile();
 
 	delete(simulator);
-	delete(simfile);
+	delete(simfile);	
+	delete(fitness_object);
 	delete(hyperneat);
 	
 	return(0);
