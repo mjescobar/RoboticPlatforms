@@ -1,32 +1,36 @@
-EXECUTABLE = Argo
+EXECUTABLE = Quadratot
 VPATH = ./src ./headers 
 CC = g++ -O3
-CFLAGS = -g -Wall -I./src -I./headers  -DNON_MATLAB_PARSING -DMAX_EXT_API_CONNECTIONS=255
+CFLAGS = -g -Wall -I./src -I./headers -DNON_MATLAB_PARSING -DMAX_EXT_API_CONNECTIONS=255
 LDFLAGS = -lpthread -L. -lhyperneat -lrobotlib
 DATE = `date +'%F--%T'`
 VAR = ./saveTrains/$(DATE)
 
-all: Argo.o CalcFunctions.o Fitness.o SimFiles.o
+all: Quadratot.o CalcFunctions.o Fitness.o SimFiles.o
 	@mkdir -p bin/functions_files
 	@mkdir -p bin/error_files
 	@mkdir -p bin/simulation_files
 	@mkdir -p bin/simulation_files/robot_position
 	@mkdir -p bin/simulation_files/joints_position
+	@mkdir -p bin/simulation_files/joints_position_real
+	@mkdir -p bin/simulation_files/joints_position_filtered
 	@mkdir -p bin/NEAT_organisms
 	@rm -f ./bin/test
 	@rm -f ./bin/functions_files/*
 	@rm -f ./bin/error_files/*
 	@rm -f ./bin/simulation_files/robot_position/*
 	@rm -f ./bin/simulation_files/joints_position/*
+	@rm -f ./bin/simulation_files/joints_position_real/*
+	@rm -f ./bin/simulation_files/joints_position_filtered/*
 	@rm -f ./bin/simulation_files/*.txt
 	@rm -f ./bin/NEAT_organisms/*
-	@echo "Linking all objects to ./bin/Argo"
-	@$(CC) $(CFLAGS) ./objects/Fitness.o ./objects/SimFiles.o ./objects/CalcFunctions.o ./objects/Argo.o  -o ./bin/$(EXECUTABLE) $(LDFLAGS)
+	@echo "Linking all objects to ./bin/Quadratot"
+	@$(CC) $(CFLAGS) ./objects/Fitness.o ./objects/SimFiles.o ./objects/CalcFunctions.o ./objects/Quadratot.o -o ./bin/$(EXECUTABLE) $(LDFLAGS)
 
-Argo.o: Argo.cpp 
+Quadratot.o: Quadratot.cpp 
 	@mkdir -p objects
-	@echo "Compiling Argo.cpp to Argo.o"
-	@$(CC) $(CFLAGS) -c ./src/Argo.cpp -o ./objects/Argo.o
+	@echo "Compiling Quadratot.cpp to Quadratot.o"
+	@$(CC) $(CFLAGS) -c ./src/Quadratot.cpp -o ./objects/Quadratot.o
 
 CalcFunctions.o: CalcFunctions.cpp 
 	@mkdir -p objects
