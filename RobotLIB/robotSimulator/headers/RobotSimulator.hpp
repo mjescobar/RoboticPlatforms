@@ -105,7 +105,7 @@ namespace ANN_USM
 		 * \param velocity Retrieves the linear velocity of an object.
 		 * \param operationMode A remote API function operation mode. Recommended operation modes for this function are simx_opmode_streaming (the first call) and simx_opmode_buffer (the following calls).
 		 */
-		void simGetObjectVelocity(int object_handle, double * velocity, simxInt operationMode);
+		void simGetObjectVelocity(int object_handle, double * lVelocity, double * aVelocity, simxInt operationMode);
 
 		/**
 		 * \brief Retrieves the orientation (Euler angles) of an object.

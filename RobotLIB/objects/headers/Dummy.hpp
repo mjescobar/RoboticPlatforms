@@ -16,7 +16,8 @@ namespace ANN_USM
 	class Dummy : public Object
 	{
 		// pointer to 3 values receiving the linearVelocity (vx, vy, vz).
-		double * velocity;
+		double * lVelocity;
+		double * aVelocity;
 
 	public:
 
@@ -39,9 +40,18 @@ namespace ANN_USM
 
 		/**
 		 * \brief Retrieves the linear velocity of an object.
-		 * \param velocity Array of 3 values receiving the linearVelocity (vx, vy, vz). Can be NULL.
+		 * \param lVel Array of 3 values receiving the linearVelocity (vx, vy, vz). Can be NULL.
+		 * \param aVel Array of 3 values receiving the angularVelocity (dAlpha, dBeta, dGamma). Can be NULL.
 		 */
-		void getVelocity(double velocity[3]);
+		void getVelocity(double lVel[3], double aVel[3]);
+
+		/**
+		 * \brief Retrieves the linear velocity of an object.
+		 * \param lVel Array of 3 values receiving the linearVelocity (vx, vy, vz). Can be NULL.
+		 * \param aVel Array of 3 values receiving the angularVelocity (dAlpha, dBeta, dGamma). Can be NULL.
+		 * \param operationMode The remote API function operation mode. Recommended operation modes for this function are simx_opmode_streaming (the first call) and simx_opmode_buffer (the following calls).
+		 */
+		void getVelocity(double lVel[3], double aVel[3], simxInt operationMode);
 	};
 }
 

@@ -149,7 +149,7 @@ namespace ANN_USM
 
 		/**
 		 * \brief Retrieve the joint current position from simulator.
-		 * \param operationMode A remote API function operation mode. Recommended operation modes for this function are simx_opmode_streaming (the first call) and simx_opmode_buffer (the following calls).
+		 * \param operationMode The remote API function operation mode. Recommended operation modes for this function are simx_opmode_streaming (the first call) and simx_opmode_buffer (the following calls).
 		 * \return Joint current position.
 		 */
 		double getJointCurrentPosition(simxInt operationMode);
@@ -162,7 +162,7 @@ namespace ANN_USM
 
 		/**
 		 * \brief Retrieves the force or torque applied to a joint along/about its active axis.
-		 * \param operationMode A remote API function operation mode. Recommended operation modes for this function are simx_opmode_streaming (the first call) and simx_opmode_buffer (the following calls).
+		 * \param operationMode The remote API function operation mode. Recommended operation modes for this function are simx_opmode_streaming (the first call) and simx_opmode_buffer (the following calls).
 		 * \return The force or the torque applied to the joint along/about its z-axis.
 		 */
 		double getJointForce(simxInt operationMode);

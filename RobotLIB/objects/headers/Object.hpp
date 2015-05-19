@@ -83,12 +83,28 @@ namespace ANN_USM
 		 */
 		void getPosition(int relativeTo, double position[3]);
 
-			/**
+		/**
+		 * \brief Retrieves the position of an object in VREP.
+		 * \param relativeTo Indicates relative to which reference frame we want the position. Specify -1 to retrieve the absolute position, sim_handle_parent to retrieve the position relative to the object's parent, or an object handle relative to whose reference frame you want the position.
+		 * \param position Array of 3 values receiving the position (x,y and z).
+		 * \param operationMode The remote API function operation mode. Recommended operation modes for this function are simx_opmode_streaming (the first call) and simx_opmode_buffer (the following calls).
+		 */
+		void getPosition(int relativeTo, double position[3], simxInt operationMode);
+
+		/**
 		 * \brief Retrieves the orientation (Euler angles) of an object in VREP.
 		 * \param relativeTo Indicates relative to which reference frame we want the position. Specify -1 to retrieve the absolute position, sim_handle_parent to retrieve the position relative to the object's parent, or an object handle relative to whose reference frame you want the position.indicates relative to which reference frame we want the orientation. Specify -1 to retrieve the absolute orientation, sim_handle_parent to retrieve the orientation relative to the object's parent, or an object handle relative to whose reference frame you want the orientation.
 		 * \param orientation Array of 3 values receiving the Euler angles (alpha, beta and gamma).
 		 */		
 		void getOrientation(int relativeTo, double orientation[3]);
+
+		/**
+		 * \brief Retrieves the orientation (Euler angles) of an object in VREP.
+		 * \param relativeTo Indicates relative to which reference frame we want the position. Specify -1 to retrieve the absolute position, sim_handle_parent to retrieve the position relative to the object's parent, or an object handle relative to whose reference frame you want the position.indicates relative to which reference frame we want the orientation. Specify -1 to retrieve the absolute orientation, sim_handle_parent to retrieve the orientation relative to the object's parent, or an object handle relative to whose reference frame you want the orientation.
+		 * \param orientation Array of 3 values receiving the Euler angles (alpha, beta and gamma).
+		 * \param operationMode The remote API function operation mode. Recommended operation modes for this function are simx_opmode_streaming (the first call) and simx_opmode_buffer (the following calls).
+		 */		
+		void getOrientation(int relativeTo, double orientation[3], simxInt operationMode);
 	};
 }
 
