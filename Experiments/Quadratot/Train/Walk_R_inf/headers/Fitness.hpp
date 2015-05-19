@@ -27,6 +27,8 @@ using namespace std;
 
 #define DISTANCE_FITNESS(X) (double)(exp(-pow((X - DISTANCE_OBJETIVE)/GAUSSIAN_STDD, 2.0)/2.0)*AMPLITUDE/sqrt(2*M_PI*GAUSSIAN_STDD*GAUSSIAN_STDD) + 0.000001)
 
+#define VAR_FITNESS(X) (double)(exp(-pow((X)/GAUSSIAN_STDD, 2.0)/2.0)*AMPLITUDE/sqrt(2*M_PI*GAUSSIAN_STDD*GAUSSIAN_STDD) + 0.000001)
+
 class Fitness
 {
 	int jdcn;
@@ -38,6 +40,8 @@ class Fitness
 	double distance;
 
 	vector < double * > robot_position;
+	vector < double > robot_vx;
+	vector < double > robot_vy;
 	vector < double > generation_frecuency;
 	vector < double > generation_fitness;
 

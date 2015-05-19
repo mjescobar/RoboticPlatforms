@@ -10,6 +10,8 @@ using namespace std;
 //{
 	double mean(vector < double > numbers);
 	double mean(vector < int > numbers);
+	double var(vector < double > numbers);
+	double var(vector < int > numbers);
 	double stdDesviation(vector < double > numbers);
 	double stdDesviation(vector < int > numbers);
 	double min(vector < double > numbers);

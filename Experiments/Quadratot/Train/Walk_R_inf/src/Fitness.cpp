@@ -7,7 +7,7 @@ Fitness::Fitness()
 {
 	jdcn = 0;
 	jdcns = vector < int > ((int)(N_LEGS + GRA_LIB_EXT),0);
-	fitness = vector < double > (2,FAILED_FITNESS);
+	fitness = vector < double > (4,FAILED_FITNESS);
 
 	frecuency = 0;
 	final_fitness = FAILED_FITNESS;
@@ -21,16 +21,15 @@ Fitness::~Fitness()
 
 void Fitness::measuringValues(vector < Joint * > joints, Dummy * dummy)
 {
-	double position[3];
+	double * position = new double[3];
+	double * lVelocity = new double[3];
 
 	dummy->getPosition(-1, position);
+	dummy->getVelocity(lVelocity, NULL);
 
-	double * aux = new double[3];
-
-	for(int i = 0; i < 3 ; i++)
-		aux[i] = position[i];
-
-	robot_position.push_back(aux);
+	robot_position.push_back(position);
+	robot_vx.push_back(lVelocity[0]);
+	robot_vy.push_back(lVelocity[1]);
 
 	/*
 	for(int i = 0; i < (int)joints.size(); i++)
@@ -70,19 +69,15 @@ double Fitness::calcFitness()
 
 		freq.back() = FREQUENCY_FITNESS((double)jdcns.back()/(TIME_SIMULATION - TIME_INIT_MEASURING));
 
-		clog << endl << endl;
-		for(int i = 0; i < (int)N_LEGS; i++)
-			clog << "PATA " << i+1 << ": " << freq.at(i) << endl;
-		clog << "CENTRO: " << freq.back() << endl << endl;
-
 		frecuency = mean(freq);
 		distance = sqrt(pow(final_location[0]- initial_location[0],2) + pow(final_location[1]- initial_location[1],2));
 
 		fitness.at(0) = DISTANCE_FITNESS(distance);
 		fitness.at(1) = frecuency;
+		fitness.at(2) = VAR_FITNESS(var(robot_vx));
+		fitness.at(3) = VAR_FITNESS(var(robot_vy));
+		
 		final_fitness = min(fitness);
-
-		clog << endl << "dist:\t" << fitness.at(0) << "\tfreq:\t" << fitness.at(1) << "\tmin:\t" << final_fitness << endl;
 
 		generation_frecuency.push_back(frecuency);
 		generation_fitness.push_back(final_fitness);		
@@ -96,12 +91,14 @@ void Fitness::resetPopulationValues()
 {
 	jdcn = 0;
 	jdcns = vector < int > ((int)(N_LEGS + GRA_LIB_EXT),0);
-	fitness = vector < double > (2,FAILED_FITNESS);
+	fitness = vector < double > (4,FAILED_FITNESS);
 
 	frecuency = 0;
 	final_fitness = FAILED_FITNESS;
 	distance = 0;
 	robot_position.clear();
+	robot_vx.clear();
+	robot_vy.clear();
 }
 
 void Fitness::resetGenerationValues()

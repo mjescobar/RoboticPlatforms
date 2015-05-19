@@ -27,6 +27,32 @@ double mean(vector < int > numbers)
 	return (double)average/numbers.size();
 }
 
+double var(vector < double > numbers)
+{
+	if((int)numbers.size() == 0) return 0.0;
+
+	double average = mean(numbers);
+	double sum = 0;
+
+	for(int i = 0; i < (int)numbers.size(); i++)
+		sum += pow(numbers.at(i)-average,2);
+	
+	return sum/numbers.size();
+}
+
+double var(vector < int > numbers)
+{
+	if((int)numbers.size() == 0) return 0.0;
+
+	double average = mean(numbers);
+	double sum = 0;
+
+	for(int i = 0; i < (int)numbers.size(); i++)
+		sum += pow(numbers.at(i)-average,2);
+	
+	return sum/numbers.size();
+}
+
 double stdDesviation(vector < double > numbers)
 {
 	if((int)numbers.size() == 0) return 0.0;
