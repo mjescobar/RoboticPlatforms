@@ -1,6 +1,8 @@
 clean:
 	@cd ./Argo/Test_neatOrganism; make clean
-	@cd ./Argo/Train; make clean
+	@cd ./Argo/Train/Multi_Objective_Fitness; make clean
+	@cd ./Argo/Train/Walk; make clean
+	@cd ./Argo/Train/Walk_R_inf; make clean
 	@cd ./Crabot/Test_neatOrganism; make clean
 	@cd ./Crabot/Train; make clean
 	@cd ./Quadratot/Test_neatOrganism; make clean
