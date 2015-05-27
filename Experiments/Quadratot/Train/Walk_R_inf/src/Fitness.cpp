@@ -57,11 +57,7 @@ double Fitness::calcFitness()
 	{
 		double * final_location = robot_position.back();
 		double * initial_location = robot_position.front();
-
-		clog << endl;
-		for(int i = 0; i < (int)jdcns.size(); i++)
-			clog << "JDCNS " << i << ":\t" << jdcns.at(i) << endl; 
-		
+				
 		vector < double > freq ((int)(N_LEGS + GRA_LIB_EXT),0.0);
 
 		for(int i = 0; i < N_LEGS; i++)
@@ -140,6 +136,20 @@ double Fitness::getFrecuencyThreshold()
 double Fitness::getJointDirectionChangeNumber()
 {
 	return jdcn;
+}
+
+string Fitness::getFitnessResults()
+{
+	stringstream results;
+
+	results << endl;
+
+	for(int i = 0; i < (int)fitness.size(); i++)
+		results << "Fitness " << i << ":\t" << fitness.at(i) << endl;
+
+	results << "Fitness final:\t" << final_fitness << endl << endl;
+
+	return results.str();
 }
 
 #endif

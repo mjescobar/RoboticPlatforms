@@ -19,11 +19,8 @@ SimFiles::~SimFiles()
 	
 void SimFiles::addFileResults(Fitness * fitness, int generation, int population)	
 {	
-	file_results << endl << "===========================================   G" << generation << " P" << population <<endl;
-	file_results << "Joint direction change number: " << fitness->getJointDirectionChangeNumber() << endl;
-	file_results << "Joint distance change number frecuency: " << fitness->getFrecuency() << endl;
-	file_results << "Traveled distance : " << fitness->getDistance() << endl;
-	file_results << "Fitness: " << fitness->getFitness() << endl;
+	file_results << "======================================  G" << generation << " P" << population <<endl;
+	file_results << fitness->getFitnessResults() << endl;
 }
 
 void SimFiles::addFileResults(double best_fitness)

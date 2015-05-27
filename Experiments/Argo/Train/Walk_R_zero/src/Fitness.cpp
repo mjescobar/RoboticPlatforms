@@ -7,7 +7,7 @@ Fitness::Fitness()
 {
 	jdcn = 0;
 	jdcns = vector < int > ((int)(N_LEGS + GRA_LIB_EXT),0);
-	fitness = vector < double > (4,FAILED_FITNESS);
+	fitness = vector < double > (6,FAILED_FITNESS);
 
 	frecuency = 0;
 	final_fitness = FAILED_FITNESS;
@@ -23,13 +23,15 @@ void Fitness::measuringValues(vector < Joint * > joints, Dummy * dummy)
 {
 	double * position = new double[3];
 	double * lVelocity = new double[3];
+	double * aVelocity = new double[3];
 
 	dummy->getPosition(-1, position);
-	dummy->getVelocity(lVelocity, NULL);
+	dummy->getVelocity(lVelocity, aVelocity);
 
 	robot_position.push_back(position);
 	robot_vx.push_back(lVelocity[0]);
 	robot_vy.push_back(lVelocity[1]);
+	robot_walpha.push_back(aVelocity[0]);
 
 	/*
 	for(int i = 0; i < (int)joints.size(); i++)
@@ -57,11 +59,7 @@ double Fitness::calcFitness()
 	{
 		double * final_location = robot_position.back();
 		double * initial_location = robot_position.front();
-
-		clog << endl;
-		for(int i = 0; i < (int)jdcns.size(); i++)
-			clog << "JDCNS " << i << ":\t" << jdcns.at(i) << endl; 
-		
+				
 		vector < double > freq ((int)(N_LEGS + GRA_LIB_EXT),0.0);
 
 		for(int i = 0; i < N_LEGS; i++)
@@ -76,6 +74,8 @@ double Fitness::calcFitness()
 		fitness.at(1) = frecuency;
 		fitness.at(2) = VAR_FITNESS(var(robot_vx));
 		fitness.at(3) = VAR_FITNESS(var(robot_vy));
+		fitness.at(4) = VAR_FITNESS(var(robot_walpha));
+		fitness.at(5) = ANGULAR_VELOCITY_FITNESS(mean(robot_walpha));
 		
 		final_fitness = min(fitness);
 
@@ -91,7 +91,7 @@ void Fitness::resetPopulationValues()
 {
 	jdcn = 0;
 	jdcns = vector < int > ((int)(N_LEGS + GRA_LIB_EXT),0);
-	fitness = vector < double > (4,FAILED_FITNESS);
+	fitness = vector < double > (6,FAILED_FITNESS);
 
 	frecuency = 0;
 	final_fitness = FAILED_FITNESS;
@@ -99,6 +99,7 @@ void Fitness::resetPopulationValues()
 	robot_position.clear();
 	robot_vx.clear();
 	robot_vy.clear();
+	robot_walpha.clear();
 }
 
 void Fitness::resetGenerationValues()

@@ -171,20 +171,12 @@ int main(int argc, char* argv[])
 				{						
 					fitness->calcFitness();
 
-					clog << endl << "===========================================   G" << g << " P" << p <<endl;
-					clog << "Joint direction change number: " << fitness->getJointDirectionChangeNumber() << endl;
-					clog << "Joint distance change number frecuency: " << fitness->getFrecuency() << endl;
-					clog << "Traveled distance : " << fitness->getDistance() << endl;
-					clog << "Fitness: " << fitness->getFitness() << endl;
+					clog << "======================================  G" << g << " P" << p <<endl;
+					clog << fitness->getFitnessResults() << endl;
 
-					simfile->addFileResults(fitness, g, p);				
+					simfile->addFileResults(fitness, g, p);		
 
-					if(hyperneat->HyperNeatFitness(fitness->getFitness(), p))
-					{
-						//OBTEIN FUNCTIONS
-						hyperneat->GetHyperNeatOutputFunctions("c++");
-						message2 << "BEST ";
-					}
+					hyperneat->HyperNeatFitness(fitness->getFitness(), p);
 
 					message2 << "FITNESS : " << fitness->getFitness();
 					simulator->simAddStatusbarMessage((char*)message2.str().c_str() , simx_opmode_oneshot_wait);
