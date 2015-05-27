@@ -27,7 +27,7 @@ using namespace std;
 
 //distance fitness
 
-#define DISTANCE_FITNESS(X) (double)(pow(2.0,pow(X,2.0)) - 1 + FITNESS_BASE)
+#define DISTANCE_FITNESS(X) (double)(exp(-pow((X - PERFECT_FRECUENCY)/GAUSSIAN_STDD, 2.0)/2.0)*AMPLITUDE)
 
 class Fitness
 {

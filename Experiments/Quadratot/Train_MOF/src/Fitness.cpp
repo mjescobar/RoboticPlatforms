@@ -87,7 +87,8 @@ double Fitness::calcFitness()
 		generation_frecuency.push_back(frecuency);
 		generation_fitness.push_back(final_fitness);		
 	}
-	else final_fitness = FAILED_FITNESS;
+	else 
+		final_fitness = FAILED_FITNESS;
 
 	return final_fitness;		
 }
