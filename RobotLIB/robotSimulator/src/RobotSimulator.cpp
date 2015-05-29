@@ -81,7 +81,7 @@ void RobotSimulator::simGetObjectHandle(char name[], int * handle, simxInt opera
 
 void RobotSimulator::simGetObjectPosition(int object_handle, int relativeTo, double * position, simxInt operationMode)
 {
-	float aux[3];
+	float * aux = new float[3];
 
 	int error = simxGetObjectPosition(clientID, object_handle, relativeTo, aux, operationMode);
 	if(error != 0) vrep_error << "simxGetObjectPosition - " << object_handle << " : "<< error << endl;
@@ -90,20 +90,31 @@ void RobotSimulator::simGetObjectPosition(int object_handle, int relativeTo, dou
 		position[i] = (double)aux[i];
 }
 
-void RobotSimulator::simGetObjectVelocity(int object_handle, double * velocity, simxInt operationMode)
+void RobotSimulator::simGetObjectVelocity(int object_handle, double * lVelocity, double * aVelocity, simxInt operationMode)
 {
-	float aux[3];
+	float * lVel = new float[3];
+	float * aVel = new float[3];
 
-	int error = simxGetObjectVelocity(clientID, object_handle, aux, NULL, operationMode);
+	int error = simxGetObjectVelocity(clientID, object_handle, lVel, aVel, operationMode);
 	if(error != 0) vrep_error << "simxGetObjectVelocity - " << object_handle << " : "<< error << endl;
 
-	for(int i = 0; i < 3; i++)
-		velocity[i] = (double)aux[i];
+	if((lVelocity == NULL) && (aVelocity == NULL))
+		clog << "ERROR: lVelocity and aVelocity can not be null at the same time" << endl;
+	else
+	{
+		if(lVelocity != NULL)
+		for(int i = 0; i < 3; i++)
+			lVelocity[i] = (double)lVel[i];
+
+	if(aVelocity != NULL)
+		for(int i = 0; i < 3; i++)
+			aVelocity[i] = (double)aVel[i];
+	}	
 }
 
 void RobotSimulator::simGetObjectOrientation(int object_handle, int relativeTo, double * orientation, simxInt operationMode)
 {
-	float aux[3];
+	float * aux = new float[3];
 
 	int error = simxGetObjectOrientation(clientID,object_handle, relativeTo, aux, operationMode);
 	if(error != 0) vrep_error << "simxGetObjectOrientation - " << object_handle << " : "<< error << endl;

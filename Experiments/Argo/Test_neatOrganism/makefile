@@ -1,4 +1,4 @@
-EXECUTABLE = Crabot
+EXECUTABLE = Argo
 VPATH = ./src ./headers 
 CC = g++ -O3
 CFLAGS = -g -Wall -I./src -I./headers  -DNON_MATLAB_PARSING -DMAX_EXT_API_CONNECTIONS=255
@@ -6,7 +6,7 @@ LDFLAGS = -lpthread -L. -lhyperneat -lrobotlib
 DATE = `date +'%F--%T'`
 VAR = ./saveTrains/$(DATE)
 
-all: Crabot.o CalcFunctions.o Fitness.o SimFiles.o
+all: Argo.o CalcFunctions.o Fitness.o SimFiles.o
 	@mkdir -p bin/functions_files
 	@mkdir -p bin/error_files
 	@mkdir -p bin/simulation_files
@@ -20,13 +20,13 @@ all: Crabot.o CalcFunctions.o Fitness.o SimFiles.o
 	@rm -f ./bin/simulation_files/joints_position/*
 	@rm -f ./bin/simulation_files/*.txt
 	@rm -f ./bin/NEAT_organisms/*
-	@echo "Linking all objects to ./bin/Crabot"
-	@$(CC) $(CFLAGS) ./objects/Fitness.o ./objects/SimFiles.o ./objects/CalcFunctions.o ./objects/Crabot.o  -o ./bin/$(EXECUTABLE) $(LDFLAGS)
+	@echo "Linking all objects to ./bin/Argo"
+	@$(CC) $(CFLAGS) ./objects/Fitness.o ./objects/SimFiles.o ./objects/CalcFunctions.o ./objects/Argo.o  -o ./bin/$(EXECUTABLE) $(LDFLAGS)
 
-Crabot.o: Crabot.cpp 
+Argo.o: Argo.cpp 
 	@mkdir -p objects
-	@echo "Compiling Crabot.cpp to Crabot.o"
-	@$(CC) $(CFLAGS) -c ./src/Crabot.cpp -o ./objects/Crabot.o
+	@echo "Compiling Argo.cpp to Argo.o"
+	@$(CC) $(CFLAGS) -c ./src/Argo.cpp -o ./objects/Argo.o
 
 CalcFunctions.o: CalcFunctions.cpp 
 	@mkdir -p objects
