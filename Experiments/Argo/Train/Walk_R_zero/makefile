@@ -48,6 +48,7 @@ SimFiles.o: SimFiles.cpp
 	@$(CC) $(CFLAGS) -c ./src/SimFiles.cpp -o ./objects/SimFiles.o
 
 clean:
+	@echo "Cleaning"
 	@rm -f -R ./objects
 	@rm -f ./bin/$(EXECUTABLE)
 	@rm -f ./bin/test
@@ -59,3 +60,5 @@ clean:
 save:
 	@mkdir -p $(VAR); cp -R ./bin/* $(VAR);
 
+run:
+	cd bin; ./Argo mo_argo.json user_def genetic_encoding

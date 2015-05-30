@@ -16,8 +16,20 @@ int main(int argc, char* argv[])
 		cerr << "ERROR: The number of arguments is incorrect" << endl;
 		return -1;	
 	} 
-
-	simulator->simStart();
+	if(argc == 5)
+	{
+		// Port defined
+		simulator->simStart(argv[4]);
+	}
+	else if (argc==6)
+	{
+		// ip and port are defined
+		simulator->simStart(argv[4] ,atoi(argv[5]));
+	}
+	else
+	{
+		simulator->simStart();
+	}
 	// ============= VREP INITIALIZATIONS ============= //			
 
 	vector < Joint * > joints;
