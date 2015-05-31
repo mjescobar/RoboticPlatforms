@@ -48,6 +48,17 @@ void RobotSimulator::simStart(const char * ip, int port)
 	}
 }
 
+void RobotSimulator::simStart(int port)
+{
+	clientID = simxStart((simxChar*)"127.0.0.1", port, true, true, 2000, 5);
+	if (clientID != -1) clog << "The connection has been successfully established with VREP" << endl;
+	else 
+	{
+		clog << "ERROR: The connection to VREP was not possible" << endl;
+		return;
+	}
+}
+
 void RobotSimulator::simFinish()
 {	
 	simxFinish(clientID);

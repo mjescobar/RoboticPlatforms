@@ -3,38 +3,24 @@
 
 #include "Argo.hpp"
 
-int main(int argc, char* argv[])
-{	
-	srand (time(0));
+int cantidadDeVreps;
+vector <RobotSimulator * > simulators;
+Population * cppn_neat;
+char * HyperNEATPath;
+int currentGeneration;
+int cppnOutputAmount;
 
-	SimFiles * simfile = new SimFiles(); 
-	Fitness * fitness = new Fitness();
-	RobotSimulator * simulator = new RobotSimulator();
 
-	if(argc < 4)
-	{
-		cerr << "ERROR: The number of arguments is incorrect" << endl;
-		return -1;	
-	} 
-	if(argc == 5)
-	{
-		// Port defined
-		simulator->simStart(argv[4]);
-	}
-	else if (argc==6)
-	{
-		// ip and port are defined
-		simulator->simStart(argv[4] ,atoi(argv[5]));
-	}
-	else
-	{
-		simulator->simStart();
-	}
+void * calcOrganismFitness(void * arg)
+{
+	int segmento = *((int *)(arg));
+
+
 	// ============= VREP INITIALIZATIONS ============= //			
 
 	vector < Joint * > joints;
 	vector < CollisionObject * > body_parts;
-	Dummy * center_dummy = new Dummy(simulator, (char*)"center");
+	Dummy * center_dummy = new Dummy(simulators.at(segmento), (char*)"center");
 
 	double max_angle_limit[] = MAX_ANGLE_LIMIT;
 	double min_angle_limit[] = MIN_ANGLE_LIMIT;
@@ -43,30 +29,27 @@ int main(int argc, char* argv[])
 	{
 		stringstream joint;
 		joint << "joint" << i << "#";
-		joints.push_back(new Joint(simulator, (char*)joint.str().c_str(), max_angle_limit[i], min_angle_limit[i], (char*)"SCALE"));
+		joints.push_back(new Joint(simulators.at(segmento), (char*)joint.str().c_str(), max_angle_limit[i], min_angle_limit[i], (char*)"SCALE"));
 	}
 
 	for(int i = 0; i < 20; i++)
 	{
 		stringstream body_part;
 		body_part << "Collision" << i << "#";
-		body_parts.push_back(new CollisionObject(simulator, (char*)body_part.str().c_str()));
+		body_parts.push_back(new CollisionObject(simulators.at(segmento), (char*)body_part.str().c_str()));
 	}
 	
 	// ================================================ //
 
 	// ========== HYPERNEAT INITIALIZATIONS =========== //
-
 	vector < double * > next;
 	vector < double * > pass;
 
 	for(int i = 0; i < N_LEGS*GRA_LIB + GRA_LIB_EXT; i++)
 	{
 		double joint_pos = joints.at(i)->getJointInitialPosition();
-
 		double * next_pos = new double(joint_pos);
 		double * pass_pos = new double(joint_pos);
-
 		next.push_back(next_pos);
 		pass.push_back(pass_pos);
 	}
@@ -77,144 +60,234 @@ int main(int argc, char* argv[])
 		pass.push_back(aux_pass);
 	}
 
-	HyperNeat * hyperneat = new HyperNeat(pass, next, argv[1], argv[2], argv[3]);
+	HyperNeat * hyperneat = new HyperNeat(pass, next, HyperNEATPath,cppnOutputAmount);
 	// ================================================ //
 
-	
-	if (simulator->simGetConnectionId() != -1)
+
+	Fitness * fitness = new Fitness();
+
+	for(int p = segmento*(cppn_neat->POPULATION_MAX/cantidadDeVreps); p < segmento*(cppn_neat->POPULATION_MAX/cantidadDeVreps)+cppn_neat->POPULATION_MAX/cantidadDeVreps; p++)
 	{
-		for(int g = 0; g < hyperneat->cppn_neat->GENERATIONS; g++)
-		{
-			fitness->resetGenerationValues();
+		double sim_time = 0;					
+		int step = 0;
+		bool flag = true;
+		stringstream message1, message2;
+		vector < double > sum_next ((int)joints.size(),0.0);
+		fitness->resetPopulationValues();
 
-			for(int p = 0; p < hyperneat->cppn_neat->POPULATION_MAX; p++)
+
+		if(!hyperneat->CreateSubstrateConnections( &cppn_neat->organisms.at(p) )   ) continue;
+
+		for(int i = 0; i < (int)joints.size(); i++)
+		{						
+			double joint_pos = joints.at(i)->getJointInitialPosition();
+			joints.at(i)->setJointInitialPosition();
+			*next.at(i) = joint_pos;
+			*pass.at(i) = joint_pos;
+		}
+
+		//Revisar - esto es para evitar un problema de error en lectura de primeros valores.
+		center_dummy->getPosition(-1, NULL);
+		center_dummy->getPosition(-1, NULL);
+		center_dummy->getOrientation(-1, NULL);
+		center_dummy->getOrientation(-1, NULL);
+		//
+
+		simulators.at(segmento)->simStartSimulation(simx_opmode_oneshot_wait);
+
+		message1 << "Generation " << currentGeneration << " Population " << p;
+		simulators.at(segmento)->simAddStatusbarMessage((char*)message1.str().c_str() , simx_opmode_oneshot_wait);
+
+		while(sim_time < TIME_SIMULATION && flag)
+		{						
+			for(int i = 0; i < ADITIONAL_HYPERNEAT_INPUTS; i++)
 			{
-				double sim_time = 0;					
-				int step = 0;
-				bool flag = true;
-				stringstream message1, message2;
-				vector < double > sum_next ((int)joints.size(),0.0);
+				*pass.at((int)joints.size()+i) = SIN(sim_time,i);
+			}
 
-				fitness->resetPopulationValues();
+			hyperneat->EvaluateSubstrateConnections();
 
-				simfile->openNewJointsPositionFile(g, p);
-				simfile->openNewRobotPositionFile(g, p);
-
-				if(!hyperneat->CreateSubstrateConnections(p)) continue;
+			for(int i = 0; i < (int)joints.size(); i++)
+			{
+				sum_next.at(i) = sum_next.at(i) + *next.at(i);
+				*pass.at(i) = *next.at(i);
+			}		
+			step++;
+			
+			if(step >= STEP_CALC)
+			{
+				simulators.at(segmento)->simPauseCommunication(1);
 
 				for(int i = 0; i < (int)joints.size(); i++)
-				{						
-					double joint_pos = joints.at(i)->getJointInitialPosition();
-					joints.at(i)->setJointInitialPosition();
-					*next.at(i) = joint_pos;
-					*pass.at(i) = joint_pos;
+				{
+					joints.at(i)->setJointPosition((double)sum_next.at(i)/STEP_CALC);
+					sum_next.at(i) = 0;
 				}
 
-				//Revisar - esto es para evitar un problema de error en lectura de primeros valores.
-				center_dummy->getPosition(-1, NULL);
-				center_dummy->getPosition(-1, NULL);
-				center_dummy->getOrientation(-1, NULL);
-				center_dummy->getOrientation(-1, NULL);
-				//
+				simulators.at(segmento)->simPauseCommunication(0);
 
-				simulator->simStartSimulation(simx_opmode_oneshot_wait);
-
-				message1 << "Generation " << g << " Population " << p;
-				simulator->simAddStatusbarMessage((char*)message1.str().c_str() , simx_opmode_oneshot_wait);
-
-				while(sim_time < TIME_SIMULATION && flag)
-				{						
-					for(int i = 0; i < ADITIONAL_HYPERNEAT_INPUTS; i++)
+				for(int i = 4; i < (int)body_parts.size(); i++)
+				{
+					if(body_parts.at(i)->getCollisionState() != 0)
 					{
-						*pass.at((int)joints.size()+i) = SIN(sim_time,i);
+						flag = false;
+						break;
 					}
-
-					hyperneat->EvaluateSubstrateConnections();
-
-					for(int i = 0; i < (int)joints.size(); i++)
-					{
-						sum_next.at(i) = sum_next.at(i) + *next.at(i);
-						*pass.at(i) = *next.at(i);
-					}		
-					step++;
-					
-					if(step >= STEP_CALC)
-					{
-						simulator->simPauseCommunication(1);
-
-						for(int i = 0; i < (int)joints.size(); i++)
-						{
-							joints.at(i)->setJointPosition((double)sum_next.at(i)/STEP_CALC);
-							sum_next.at(i) = 0;
-						}
-
-						simulator->simPauseCommunication(0);
-
-						for(int i = 4; i < (int)body_parts.size(); i++)
-						{
-							if(body_parts.at(i)->getCollisionState() != 0)
-							{
-								flag = false;
-								break;
-							}
-						}
-
-						if(sim_time > TIME_INIT_MEASURING)
-						{
-							fitness->measuringValues(joints, center_dummy);
-
-							simfile->addFileJointsPosition(joints, sim_time);
-							simfile->addFileRobotPosition(center_dummy, sim_time);
-						}							
-
-						step = 0;
-					}
-
-					usleep((int)(DELTA_T*1000000.0));
-					sim_time += DELTA_T;
 				}
 
-				simulator->simStopSimulation(simx_opmode_oneshot_wait);
+				if(sim_time > TIME_INIT_MEASURING)
+				{
+					fitness->measuringValues(joints, center_dummy);
+				}							
 
-				simfile->closeJointsPositionFile();
-				simfile->closeRobotPositionFile();
+				step = 0;
+			}
 
-				if(flag)
-				{						
-					fitness->calcFitness();
+			usleep((int)(DELTA_T*1000000.0));
+			sim_time += DELTA_T;
+		}
 
-					clog << "======================================  G" << g << " P" << p <<endl;
-					clog << fitness->getFitnessResults() << endl;
+		simulators.at(segmento)->simStopSimulation(simx_opmode_oneshot_wait);
 
-					simfile->addFileResults(fitness, g, p);		
 
-					hyperneat->HyperNeatFitness(fitness->getFitness(), p);
+		if(flag)
+		{						
+			fitness->calcFitness();
 
-					message2 << "FITNESS : " << fitness->getFitness();
-					simulator->simAddStatusbarMessage((char*)message2.str().c_str() , simx_opmode_oneshot_wait);
-				}
-				else
-				{	
-					hyperneat->HyperNeatFitness(FAILED_FITNESS, p);
-				}
-			}				
-			hyperneat->HyperNeatEvolve();
-			simfile->addFileFitness(fitness, g);
-			simfile->addFileFrecuency(fitness, g);
+			clog << "======================================  G" << currentGeneration << " P" << p <<endl;
+			clog << fitness->getFitnessResults() << endl;
+
+
+
+			bool result = (cppn_neat->fitness_champion < fitness->getFitness()) ? true: false;
+
+			if(result) {
+
+				clog << endl << "\tNEW CHAMPION FITNESS\t-->\t" << fitness->getFitness() << endl;
+
+				cppn_neat->fitness_champion = fitness->getFitness();
+				cppn_neat->champion = cppn_neat->organisms.at(p);
+			}
+
+			cppn_neat->organisms.at(p).fitness = fitness->getFitness();
+
+
+			simulators.at(segmento)->simAddStatusbarMessage((char*)message2.str().c_str() , simx_opmode_oneshot_wait);
+		}
+		else
+		{	
+			cppn_neat->organisms.at(p).fitness = FAILED_FITNESS;
 		}
 	}
 
-	clog << endl << "BEST RESULT ------------------------------------" << endl << endl;
-	clog << "\t-> " << hyperneat->cppn_neat->fitness_champion << endl << endl;
-	
-	simfile->addFileResults(hyperneat->cppn_neat->fitness_champion);
-	
-	simulator->simFinish();
-
-	delete(simulator);
-	delete(simfile);
-	delete(fitness);
 	delete(hyperneat);
+	return NULL;
+}
+
+class VrepClients{
+public:
+	VrepClients(string ruta){
+		std::ifstream input( ruta.c_str() );
+		input >> amountOfClients;
+
+		for (int i = 0; i < amountOfClients; ++i)
+		{
+			string _ip;
+			int _port;
+			input >> _ip >> _port;
+			ip.push_back(_ip);
+			ports.push_back(_port);
+			//cout << "ip: " << _ip << "\tport: " << _port << endl;
+		}
+
+
+	};
+
+	int getAmountOfClients(){return amountOfClients;};
+	string getIpAt(int place){return ip.at(place);};
+	int getPortAt(int place){return ports.at(place);};
+
+private:
+	vector <int> ports;
+	vector <string> ip;
+	int amountOfClients;
+};
+
+
+
+int main(int argc, char * argv[])
+{	
+	srand (time(0));
+	
+
+	if(argc != 5)
+	{
+		cerr << "ERROR: The number of arguments is incorrect" << endl;
+		return -1;	
+	} 
+
+
+	HyperNEATPath = argv[1];
+
+	VrepClients vrepclients = VrepClients(argv[4]);
+
+	
+	int cantidadVreps = vrepclients.getAmountOfClients();
+	for (int i = 0; i < cantidadVreps; ++i)
+	{
+		string ip = vrepclients.getIpAt(i);
+		int port = vrepclients.getPortAt(i);
+		cout << "ip: " << ip << "\tport: " << port << endl;
+	}
+	cantidadDeVreps = cantidadVreps;
+	char neatname[] = "NEAT";
+	char ruta[] = "./NEAT_organisms/";
+	cppn_neat = new Population(argv[2],argv[3], neatname, ruta, cantidadVreps);
+	
+
+	cppnOutputAmount=cppn_neat->champion.getNEATOutputSize();
+	for (int i = 0; i < cantidadVreps; ++i)
+	{		
+		RobotSimulator * simulator =  new RobotSimulator();
+		simulator->simStart(vrepclients.getIpAt(i).c_str(),vrepclients.getPortAt(i));
+		simulators.push_back(simulator);
+	}
+	
+	
+	
+	for(int g = 0; g < cppn_neat->GENERATIONS; g++)
+	{
+		currentGeneration=g;
+		
+		pthread_t tid[cantidadVreps];
+		for (int i = 0; i < cantidadVreps; ++i)
+		{
+			int * segm = new int(i);
+			pthread_create(&tid[i], NULL, calcOrganismFitness, segm);
+		}
+
+		for (int i = 0; i < cantidadVreps; ++i)
+		{
+			pthread_join(tid[i], NULL);
+		}				
+				
+			
+		cppn_neat->print_to_file_currrent_generation();
+		cppn_neat->epoch();
+	}
+	
+	clog << endl << "BEST RESULT ------------------------------------" << endl << endl;
+	clog << "\t-> " << cppn_neat->fitness_champion << endl << endl;
+	
+	for (unsigned int i = 0; i < simulators.size(); ++i)
+	{
+		simulators.at(i)->simFinish();
+		delete(simulators.at(i));
+	}
+	
+
+	
+
 	
 	return(0);
 

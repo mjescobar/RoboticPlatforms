@@ -155,8 +155,6 @@ string Fitness::getFitnessResults()
 	results << "var vel y\t" << fitness.at(3) << endl;
 	results << "vaw W\t" << fitness.at(4) << endl;
 	results << "|W|\t" << fitness.at(5) << endl;
-
-
 	results << "Fitness final:\t" << final_fitness << endl << endl;
 
 	return results.str();
