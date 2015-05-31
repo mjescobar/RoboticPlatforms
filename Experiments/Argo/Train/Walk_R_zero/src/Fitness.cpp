@@ -149,9 +149,12 @@ string Fitness::getFitnessResults()
 
 	results << endl;
 
-	for(int i = 0; i < (int)fitness.size(); i++)
-		results << "Fitness " << i << ":\t" << fitness.at(i) << endl;
-
+	results << "Fitness distance  \t" << fitness.at(0) << endl;
+	results << "Fitness frecuency \t" << fitness.at(1) << endl;
+	results << "Fitness var robot_vx  \t" << fitness.at(2) << endl;
+	results << "Fitness var robot_vy  \t" << fitness.at(3) << endl;
+	results << "Fitness var robot_walpha \t" << fitness.at(4) << endl;
+	results << "Fitness magnitude walpha \t" << fitness.at(5) << endl;
 	results << "Fitness final:\t" << final_fitness << endl << endl;
 
 	return results.str();
