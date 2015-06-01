@@ -59,5 +59,9 @@ clean:
 save:
 	@mkdir -p $(VAR); cp -R ./bin/* $(VAR);
 
+<<<<<<< HEAD
 run: 
+=======
+run:
+>>>>>>> bfce745ac7dba25d4b22fc1c66f8e353175b244b
 	cd bin; ./Argo mo_argo.json user_def genetic_encoding

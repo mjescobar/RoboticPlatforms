@@ -149,12 +149,13 @@ string Fitness::getFitnessResults()
 
 	results << endl;
 
-	results << "Fitness distance  \t" << fitness.at(0) << endl;
-	results << "Fitness frecuency \t" << fitness.at(1) << endl;
-	results << "Fitness var robot_vx  \t" << fitness.at(2) << endl;
-	results << "Fitness var robot_vy  \t" << fitness.at(3) << endl;
-	results << "Fitness var robot_walpha \t" << fitness.at(4) << endl;
-	results << "Fitness magnitude walpha \t" << fitness.at(5) << endl;
+
+	results << "distance \t" << fitness.at(0) << endl;
+	results << "frecuency \t" << fitness.at(1) << endl;
+	results << "var vel x\t" << fitness.at(2) << endl;
+	results << "var vel y\t" << fitness.at(3) << endl;
+	results << "vaw W\t" << fitness.at(4) << endl;
+	results << "|W|\t" << fitness.at(5) << endl;
 	results << "Fitness final:\t" << final_fitness << endl << endl;
 
 	return results.str();
