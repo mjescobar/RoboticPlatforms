@@ -5,7 +5,9 @@
 
 int cantidadDeVreps;
 vector <RobotSimulator * > simulators;
+vector < Fitness * > fitnesss;
 Population * cppn_neat;
+SimFiles * simfile;
 char * HyperNEATPath;
 int currentGeneration;
 int cppnOutputAmount;
@@ -21,9 +23,6 @@ void * calcOrganismFitness(void * arg)
 {
 	int segmento = *((int *)(arg));
 
-
-	Fitness * fitness = new Fitness();
-
 	for(int p = segmento*(cppn_neat->POPULATION_MAX/cantidadDeVreps); p < segmento*(cppn_neat->POPULATION_MAX/cantidadDeVreps)+cppn_neat->POPULATION_MAX/cantidadDeVreps; p++)
 	{
 		double sim_time = 0;					
@@ -31,7 +30,7 @@ void * calcOrganismFitness(void * arg)
 		bool flag = true;
 		stringstream message1, message2;
 		vector < double > sum_next ((int)jointss.at(segmento).size(),0.0);
-		fitness->resetPopulationValues();
+		fitnesss.at(segmento)->resetPopulationValues();
 
 
 		if(!hyperneats.at(segmento)->CreateSubstrateConnections( &cppn_neat->organisms.at( p ) )   ) continue;
@@ -95,7 +94,7 @@ void * calcOrganismFitness(void * arg)
 
 				if(sim_time > TIME_INIT_MEASURING)
 				{
-					fitness->measuringValues(jointss.at(segmento), center_dummys.at(segmento));
+					fitnesss.at(segmento)->measuringValues(jointss.at(segmento), center_dummys.at(segmento));
 				}							
 
 				step = 0;
@@ -110,24 +109,24 @@ void * calcOrganismFitness(void * arg)
 
 		if(flag)
 		{						
-			fitness->calcFitness();
+			fitnesss.at(segmento)->calcFitness();
 
 			clog << "======================================  G" << currentGeneration << " P" << p <<endl;
-			clog << fitness->getFitnessResults() << endl;
+			clog << fitnesss.at(segmento)->getFitnessResults() << endl;
 
 
 
-			bool result = (cppn_neat->fitness_champion < fitness->getFitness()) ? true: false;
+			bool result = (cppn_neat->fitness_champion < fitnesss.at(segmento)->getFitness()) ? true: false;
 
 			if(result) {
 
-				clog << endl << "\tNEW CHAMPION FITNESS\t-->\t" << fitness->getFitness() << endl;
+				clog << endl << "\tNEW CHAMPION FITNESS\t-->\t" << fitnesss.at(segmento)->getFitness() << endl;
 
-				cppn_neat->fitness_champion = fitness->getFitness();
+				cppn_neat->fitness_champion = fitnesss.at(segmento)->getFitness();
 				cppn_neat->champion = cppn_neat->organisms.at(p);
 			}
 
-			cppn_neat->organisms.at(p).fitness = fitness->getFitness();
+			cppn_neat->organisms.at(p).fitness = fitnesss.at(segmento)->getFitness();
 
 
 			simulators.at(segmento)->simAddStatusbarMessage((char*)message2.str().c_str() , simx_opmode_oneshot_wait);
@@ -175,6 +174,8 @@ private:
 int main(int argc, char * argv[])
 {	
 	srand (time(0));
+
+	double fitness_champion = 0.0;
 	
 	if(argc != 5)
 	{
@@ -196,8 +197,10 @@ int main(int argc, char * argv[])
 	}
 	cantidadDeVreps = cantidadVreps;
 	char neatname[] = "NEAT";
-	char ruta[] = "./NEAT_organisms/";
+	char ruta[] = "./NEAT_organisms/all/";
 	cppn_neat = new Population(argv[2],argv[3], neatname, ruta, cantidadVreps);
+
+	simfile = new SimFiles(); 
 	
 
 	cppnOutputAmount=cppn_neat->champion.getNEATOutputSize();
@@ -206,6 +209,9 @@ int main(int argc, char * argv[])
 		RobotSimulator * simulator =  new RobotSimulator();
 		simulator->simStart(vrepclients.getIpAt(i).c_str(),vrepclients.getPortAt(i));
 		simulators.push_back(simulator);
+
+		Fitness * fitness = new Fitness();
+		fitnesss.push_back(fitness);
 
 		// ============= VREP INITIALIZATIONS ============= //			
 
@@ -277,11 +283,38 @@ int main(int argc, char * argv[])
 		for (int i = 0; i < cantidadVreps; ++i)
 		{
 			pthread_join(tid[i], NULL);
-		}				
-				
+		}
+
+		simfile->addFileFitness(fitnesss, g);
+
+		for (int i = 0; i < (int)fitnesss.size(); i++)
+			fitnesss.at(i)->resetGenerationValues();
 			
+		double g_champion = 0.0;
+		double g_i = 0;	
+
+		for (int i = 0; i < (int)cppn_neat->organisms.size(); i++)
+		{	
+			double aux = cppn_neat->organisms.at(i).fitness;
+			if(g_champion < aux)
+			{
+				g_i = i;
+				g_champion = aux;
+			}
+		}
+
+		stringstream org;
+		org << "./NEAT_organisms/champions/G" << g;
+		cppn_neat->organisms.at(g_i).save((char*)org.str().c_str());
+
 		cppn_neat->print_to_file_currrent_generation();
-		cppn_neat->epoch();
+		cppn_neat->epoch();	
+
+		if(fitness_champion < g_champion)
+		{
+			fitness_champion = g_champion;
+			cppn_neat->organisms.at(g_i).save((char*)"./NEAT_organisms/champions/champion");
+		}
 	}
 	
 	clog << endl << "BEST RESULT ------------------------------------" << endl << endl;

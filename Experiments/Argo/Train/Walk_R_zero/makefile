@@ -15,6 +15,8 @@ all: Argo.o CalcFunctions.o Fitness.o SimFiles.o
 	@mkdir -p bin/simulation_files/joints_position_real
 	@mkdir -p bin/simulation_files/joints_position_filtered
 	@mkdir -p bin/NEAT_organisms
+	@mkdir -p bin/NEAT_organisms/all
+	@mkdir -p bin/NEAT_organisms/champions
 	@rm -f ./bin/test
 	@rm -f ./bin/functions_files/*
 	@rm -f ./bin/error_files/*
@@ -23,7 +25,8 @@ all: Argo.o CalcFunctions.o Fitness.o SimFiles.o
 	@rm -f ./bin/simulation_files/joints_position_real/*
 	@rm -f ./bin/simulation_files/joints_position_filtered/*
 	@rm -f ./bin/simulation_files/*.txt
-	@rm -f ./bin/NEAT_organisms/*
+	@rm -f ./bin/NEAT_organisms/all/*
+	@rm -f ./bin/NEAT_organisms/champions/*	
 	@echo "Linking all objects to ./bin/Argo"
 	@$(CC) $(CFLAGS) ./objects/Fitness.o ./objects/SimFiles.o ./objects/CalcFunctions.o ./objects/Argo.o -o ./bin/$(EXECUTABLE) $(LDFLAGS)
 
