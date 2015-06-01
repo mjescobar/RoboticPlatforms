@@ -10,58 +10,16 @@ char * HyperNEATPath;
 int currentGeneration;
 int cppnOutputAmount;
 
+vector <HyperNeat *> hyperneats;
+vector < vector < double * > > nexts;
+vector < vector < double * > > passs;
+vector < vector < Joint * > > jointss;
+vector < vector < CollisionObject * > > body_partss;
+vector < Dummy *> center_dummys;
 
 void * calcOrganismFitness(void * arg)
 {
 	int segmento = *((int *)(arg));
-
-
-	// ============= VREP INITIALIZATIONS ============= //			
-
-	vector < Joint * > joints;
-	vector < CollisionObject * > body_parts;
-	Dummy * center_dummy = new Dummy(simulators.at(segmento), (char*)"center");
-
-	double max_angle_limit[] = MAX_ANGLE_LIMIT;
-	double min_angle_limit[] = MIN_ANGLE_LIMIT;
-
-	for(int i = 0; i < N_LEGS*GRA_LIB + GRA_LIB_EXT; i++)
-	{
-		stringstream joint;
-		joint << "joint" << i << "#";
-		joints.push_back(new Joint(simulators.at(segmento), (char*)joint.str().c_str(), max_angle_limit[i], min_angle_limit[i], (char*)"SCALE"));
-	}
-
-	for(int i = 0; i < 20; i++)
-	{
-		stringstream body_part;
-		body_part << "Collision" << i << "#";
-		body_parts.push_back(new CollisionObject(simulators.at(segmento), (char*)body_part.str().c_str()));
-	}
-	
-	// ================================================ //
-
-	// ========== HYPERNEAT INITIALIZATIONS =========== //
-	vector < double * > next;
-	vector < double * > pass;
-
-	for(int i = 0; i < N_LEGS*GRA_LIB + GRA_LIB_EXT; i++)
-	{
-		double joint_pos = joints.at(i)->getJointInitialPosition();
-		double * next_pos = new double(joint_pos);
-		double * pass_pos = new double(joint_pos);
-		next.push_back(next_pos);
-		pass.push_back(pass_pos);
-	}
-
-	for(int i = 0; i < ADITIONAL_HYPERNEAT_INPUTS; i++)
-	{
-		double * aux_pass = new double(SIN(0,i));
-		pass.push_back(aux_pass);
-	}
-
-	HyperNeat * hyperneat = new HyperNeat(pass, next, HyperNEATPath,cppnOutputAmount);
-	// ================================================ //
 
 
 	Fitness * fitness = new Fitness();
@@ -72,25 +30,25 @@ void * calcOrganismFitness(void * arg)
 		int step = 0;
 		bool flag = true;
 		stringstream message1, message2;
-		vector < double > sum_next ((int)joints.size(),0.0);
+		vector < double > sum_next ((int)jointss.at(segmento).size(),0.0);
 		fitness->resetPopulationValues();
 
 
-		if(!hyperneat->CreateSubstrateConnections( &cppn_neat->organisms.at(p) )   ) continue;
+		if(!hyperneats.at(segmento)->CreateSubstrateConnections( &cppn_neat->organisms.at( p ) )   ) continue;
 
-		for(int i = 0; i < (int)joints.size(); i++)
+		for(int i = 0; i < (int)jointss.at(segmento).size(); i++)
 		{						
-			double joint_pos = joints.at(i)->getJointInitialPosition();
-			joints.at(i)->setJointInitialPosition();
-			*next.at(i) = joint_pos;
-			*pass.at(i) = joint_pos;
+			double joint_pos = jointss.at(segmento).at(i)->getJointInitialPosition();
+			jointss.at(segmento).at(i)->setJointInitialPosition();
+			*nexts.at(segmento).at(i) = joint_pos;
+			*passs.at(segmento).at(i) = joint_pos;
 		}
 
 		//Revisar - esto es para evitar un problema de error en lectura de primeros valores.
-		center_dummy->getPosition(-1, NULL);
-		center_dummy->getPosition(-1, NULL);
-		center_dummy->getOrientation(-1, NULL);
-		center_dummy->getOrientation(-1, NULL);
+		center_dummys.at(segmento)->getPosition(-1, NULL);
+		center_dummys.at(segmento)->getPosition(-1, NULL);
+		center_dummys.at(segmento)->getOrientation(-1, NULL);
+		center_dummys.at(segmento)->getOrientation(-1, NULL);
 		//
 
 		simulators.at(segmento)->simStartSimulation(simx_opmode_oneshot_wait);
@@ -102,15 +60,15 @@ void * calcOrganismFitness(void * arg)
 		{						
 			for(int i = 0; i < ADITIONAL_HYPERNEAT_INPUTS; i++)
 			{
-				*pass.at((int)joints.size()+i) = SIN(sim_time,i);
+				*passs.at(segmento).at((int)jointss.at(segmento).size()+i) = SIN(sim_time,i);
 			}
 
-			hyperneat->EvaluateSubstrateConnections();
+			hyperneats.at(segmento)->EvaluateSubstrateConnections();
 
-			for(int i = 0; i < (int)joints.size(); i++)
+			for(int i = 0; i < (int)jointss.at(segmento).size(); i++)
 			{
-				sum_next.at(i) = sum_next.at(i) + *next.at(i);
-				*pass.at(i) = *next.at(i);
+				sum_next.at(i) = sum_next.at(i) + *nexts.at(segmento).at(i);
+				*passs.at(segmento).at(i) = *nexts.at(segmento).at(i);
 			}		
 			step++;
 			
@@ -118,17 +76,17 @@ void * calcOrganismFitness(void * arg)
 			{
 				simulators.at(segmento)->simPauseCommunication(1);
 
-				for(int i = 0; i < (int)joints.size(); i++)
+				for(int i = 0; i < (int)jointss.at(segmento).size(); i++)
 				{
-					joints.at(i)->setJointPosition((double)sum_next.at(i)/STEP_CALC);
+					jointss.at(segmento).at(i)->setJointPosition((double)sum_next.at(i)/STEP_CALC);
 					sum_next.at(i) = 0;
 				}
 
 				simulators.at(segmento)->simPauseCommunication(0);
 
-				for(int i = 4; i < (int)body_parts.size(); i++)
+				for(int i = 4; i < (int)body_partss.at(segmento).size(); i++)
 				{
-					if(body_parts.at(i)->getCollisionState() != 0)
+					if(body_partss.at(segmento).at(i)->getCollisionState() != 0)
 					{
 						flag = false;
 						break;
@@ -137,7 +95,7 @@ void * calcOrganismFitness(void * arg)
 
 				if(sim_time > TIME_INIT_MEASURING)
 				{
-					fitness->measuringValues(joints, center_dummy);
+					fitness->measuringValues(jointss.at(segmento), center_dummys.at(segmento));
 				}							
 
 				step = 0;
@@ -180,7 +138,6 @@ void * calcOrganismFitness(void * arg)
 		}
 	}
 
-	delete(hyperneat);
 	return NULL;
 }
 
@@ -219,13 +176,11 @@ int main(int argc, char * argv[])
 {	
 	srand (time(0));
 	
-
 	if(argc != 5)
 	{
 		cerr << "ERROR: The number of arguments is incorrect" << endl;
 		return -1;	
-	} 
-
+	}
 
 	HyperNEATPath = argv[1];
 
@@ -251,9 +206,62 @@ int main(int argc, char * argv[])
 		RobotSimulator * simulator =  new RobotSimulator();
 		simulator->simStart(vrepclients.getIpAt(i).c_str(),vrepclients.getPortAt(i));
 		simulators.push_back(simulator);
+
+		// ============= VREP INITIALIZATIONS ============= //			
+
+		vector < Joint * > joints;
+		vector < CollisionObject * > body_parts;
+		Dummy * center_dummy = new Dummy(simulators.at(i), (char*)"center");
+
+		double max_angle_limit[] = MAX_ANGLE_LIMIT;
+		double min_angle_limit[] = MIN_ANGLE_LIMIT;
+
+		for(int k = 0; k < N_LEGS*GRA_LIB + GRA_LIB_EXT; k++)
+		{
+
+			stringstream joint;
+			joint << "joint" << k << "#";
+			joints.push_back(new Joint(simulators.at(i), (char*)joint.str().c_str(), max_angle_limit[k], min_angle_limit[k], (char*)"SCALE"));
+		}
+
+		for(int k = 0; k < 17; k++)
+		{
+			stringstream body_part;
+			body_part << "Collision" << k << "#";
+			body_parts.push_back(new CollisionObject(simulators.at(i), (char*)body_part.str().c_str()));
+		}
+		
+		// ================================================ //
+		// ========== HYPERNEAT INITIALIZATIONS =========== //
+		vector < double * > next;
+		vector < double * > pass;
+
+		for(int k = 0; k < N_LEGS*GRA_LIB + GRA_LIB_EXT; k++)
+		{
+			double joint_pos = joints.at(k)->getJointInitialPosition();
+			double * next_pos = new double(joint_pos);
+			double * pass_pos = new double(joint_pos);
+			next.push_back(next_pos);
+			pass.push_back(pass_pos);
+		}
+
+		for(int k = 0; k < ADITIONAL_HYPERNEAT_INPUTS; k++)
+		{
+			double * aux_pass = new double(SIN(0,k));
+			pass.push_back(aux_pass);
+		}
+
+		HyperNeat * hyperneat = new HyperNeat(pass, next, HyperNEATPath,cppnOutputAmount);
+		// ================================================ //
+
+
+		nexts.push_back(next);
+		passs.push_back(pass);
+		hyperneats.push_back(hyperneat);
+		jointss.push_back(joints);
+		center_dummys.push_back(center_dummy);
+		body_partss.push_back(body_parts);
 	}
-	
-	
 	
 	for(int g = 0; g < cppn_neat->GENERATIONS; g++)
 	{
@@ -285,12 +293,7 @@ int main(int argc, char * argv[])
 		delete(simulators.at(i));
 	}
 	
-
-	
-
-	
 	return(0);
-
 }
 
 #endif
