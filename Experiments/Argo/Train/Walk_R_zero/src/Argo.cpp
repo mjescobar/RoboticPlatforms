@@ -23,7 +23,7 @@ void * calcOrganismFitness(void * arg)
 
 
 	Fitness * fitness = new Fitness();
-
+	cerr << "cppn_neat->POPULATION_MAX:  " << cppn_neat->POPULATION_MAX << "  cantidadDeVreps:  " << cantidadDeVreps << "  (cppn_neat->POPULATION_MAX/cantidadDeVreps):  " << (cppn_neat->POPULATION_MAX/cantidadDeVreps) << endl;
 	for(int p = segmento*(cppn_neat->POPULATION_MAX/cantidadDeVreps); p < segmento*(cppn_neat->POPULATION_MAX/cantidadDeVreps)+cppn_neat->POPULATION_MAX/cantidadDeVreps; p++)
 	{
 		double sim_time = 0;					
