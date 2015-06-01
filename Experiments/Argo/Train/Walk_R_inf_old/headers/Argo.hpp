@@ -13,12 +13,10 @@
 #include <fstream>
 #include <HYPERNEAT>
 #include <ROBOTLIB>
-#include <NEAT>
 #include "CalcFunctions.hpp"
 #include "Fitness.hpp"
 #include "SimFiles.hpp"
 #include "Simulation.hpp"
-
 
 using namespace std;
 using namespace ANN_USM;

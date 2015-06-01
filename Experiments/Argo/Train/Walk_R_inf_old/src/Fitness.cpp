@@ -7,7 +7,7 @@ Fitness::Fitness()
 {
 	jdcn = 0;
 	jdcns = vector < int > ((int)(N_LEGS + GRA_LIB_EXT),0);
-	fitness = vector < double > (3,FAILED_FITNESS);
+	fitness = vector < double > (4,FAILED_FITNESS);
 
 	frecuency = 0;
 	final_fitness = FAILED_FITNESS;
@@ -23,15 +23,13 @@ void Fitness::measuringValues(vector < Joint * > joints, Dummy * dummy)
 {
 	double * position = new double[3];
 	double * lVelocity = new double[3];
-	double * aVelocity = new double[3];
 
 	dummy->getPosition(-1, position);
-	dummy->getVelocity(lVelocity, aVelocity);
+	dummy->getVelocity(lVelocity, NULL);
 
 	robot_position.push_back(position);
 	robot_vx.push_back(lVelocity[0]);
 	robot_vy.push_back(lVelocity[1]);
-	robot_walpha.push_back(aVelocity[0]);
 
 	/*
 	for(int i = 0; i < (int)joints.size(); i++)
@@ -59,7 +57,11 @@ double Fitness::calcFitness()
 	{
 		double * final_location = robot_position.back();
 		double * initial_location = robot_position.front();
-				
+
+		clog << endl;
+		for(int i = 0; i < (int)jdcns.size(); i++)
+			clog << "JDCNS " << i << ":\t" << jdcns.at(i) << endl; 
+		
 		vector < double > freq ((int)(N_LEGS + GRA_LIB_EXT),0.0);
 
 		for(int i = 0; i < N_LEGS; i++)
@@ -70,18 +72,10 @@ double Fitness::calcFitness()
 		frecuency = mean(freq);
 		distance = sqrt(pow(final_location[0]- initial_location[0],2) + pow(final_location[1]- initial_location[1],2));
 
-		/*
 		fitness.at(0) = DISTANCE_FITNESS(distance);
 		fitness.at(1) = frecuency;
 		fitness.at(2) = VAR_FITNESS(var(robot_vx));
 		fitness.at(3) = VAR_FITNESS(var(robot_vy));
-		fitness.at(4) = VAR_FITNESS(var(robot_walpha));
-		fitness.at(5) = ANGULAR_VELOCITY_FITNESS(mean(robot_walpha));
-		*/
-
-		fitness.at(0) = DISTANCE_FITNESS(distance);
-		fitness.at(1) = frecuency;
-		fitness.at(2) = ANGULAR_VELOCITY_FITNESS(mean(robot_walpha));
 		
 		final_fitness = min(fitness);
 
@@ -97,7 +91,7 @@ void Fitness::resetPopulationValues()
 {
 	jdcn = 0;
 	jdcns = vector < int > ((int)(N_LEGS + GRA_LIB_EXT),0);
-	fitness = vector < double > (3,FAILED_FITNESS);
+	fitness = vector < double > (4,FAILED_FITNESS);
 
 	frecuency = 0;
 	final_fitness = FAILED_FITNESS;
@@ -105,7 +99,6 @@ void Fitness::resetPopulationValues()
 	robot_position.clear();
 	robot_vx.clear();
 	robot_vy.clear();
-	robot_walpha.clear();
 }
 
 void Fitness::resetGenerationValues()
@@ -155,23 +148,9 @@ string Fitness::getFitnessResults()
 
 	results << endl;
 
+	for(int i = 0; i < (int)fitness.size(); i++)
+		results << "Fitness " << i << ":\t" << fitness.at(i) << endl;
 
-	// results << "distance \t" << fitness.at(0) << endl;
-	// results << "frecuency \t" << fitness.at(1) << endl;
-	// results << "var vel x\t" << fitness.at(2) << endl;
-	// results << "var vel y\t" << fitness.at(3) << endl;
-	// results << "vaw W\t" << fitness.at(4) << endl;
-	// results << "|W|\t" << fitness.at(5) << endl;
-	// results << "mean W: " << mean(robot_walpha) << endl;
-	// results << "Fitness final:\t" << final_fitness << endl << endl;
-
-	results << "fitness distance \t" << fitness.at(0) << endl;
-	results << "fitness frecuency \t" << fitness.at(1) << endl;
-	results << "fitness |W|\t" << fitness.at(2) << endl;
-	results << "distance: " << distance << endl;
-	results << "mean Vx: " << mean(robot_vx) << endl;
-	results << "mean Vy: " << mean(robot_vy) << endl;
-	results << "mean W: " << mean(robot_walpha) << endl;
 	results << "Fitness final:\t" << final_fitness << endl << endl;
 
 	return results.str();
