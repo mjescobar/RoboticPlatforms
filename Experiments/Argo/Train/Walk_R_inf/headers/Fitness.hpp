@@ -59,6 +59,8 @@ class Fitness
 	vector < double > generation_frecuency;
 	vector < double > generation_fitness;
 
+	int iteration;
+
 public:
 
 	Fitness();
