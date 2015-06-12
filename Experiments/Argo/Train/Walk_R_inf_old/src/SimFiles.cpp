@@ -37,21 +37,6 @@ void SimFiles::addFileFitness(Fitness * fitness, int generation)
 	file_fitness << generation << "\t" << average << "\t" << stddesv << endl;
 }
 
-void SimFiles::addFileFitness(vector < Fitness * > fitness, int generation)
-{
-	vector < double > fit;
-	for(int i = 0; i < (int)fitness.size(); i++)
-	{
-		vector < double > aux(fitness.at(i)->getGenerationFitness());
-		fit.insert(fit.end(),aux.begin(),aux.end());
-	}
-
-	double average = mean(fit);
-	double stddesv = stdDesviation(fit);
-
-	file_fitness << generation << "\t" << average << "\t" << stddesv << endl;
-}
-
 void SimFiles::addFileFrecuency(Fitness * fitness, int generation)
 {
 	double average = mean(fitness->getGenerationFrecuency());

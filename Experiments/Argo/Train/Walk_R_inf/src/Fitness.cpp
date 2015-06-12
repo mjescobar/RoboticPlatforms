@@ -12,6 +12,8 @@ Fitness::Fitness()
 	frecuency = 0;
 	final_fitness = FAILED_FITNESS;
 	distance = 0;
+
+	iteration = 0;
 }
 
 Fitness::~Fitness()
@@ -22,20 +24,32 @@ Fitness::~Fitness()
 void Fitness::measuringValues(vector < Joint * > joints, Dummy * dummy)
 {
 	double * position = new double[3];
-	double * lVelocity = new double[3];
+	// double * lVelocity = new double[3];
+	// double * aVelocity = new double[3];
 
 	dummy->getPosition(-1, position);
-	dummy->getVelocity(lVelocity, NULL);
+	// dummy->getVelocity(lVelocity, aVelocity);
+
 
 	robot_position.push_back(position);
-	robot_vx.push_back(lVelocity[0]);
-	robot_vy.push_back(lVelocity[1]);
+	// robot_vx.push_back(lVelocity[0]);
+	// robot_vy.push_back(lVelocity[1]);
+	// robot_walpha.push_back(aVelocity[0]);
 
-	/*
-	for(int i = 0; i < (int)joints.size(); i++)
-		if(joints.at(i)->getJointChangeDirection())
-			jdcn++;
-	*/
+	if (iteration < 4)
+	{
+		iteration++;
+	}
+	else
+	{
+		iteration = 0;
+		double aux_vx = (robot_position.back()[0] - (robot_position.end()[-4])[0])/(3*DELTA_T);
+		double aux_vy = (robot_position.back()[1] - (robot_position.end()[-4])[1])/(3*DELTA_T);
+		robot_vx.push_back(aux_vx);
+		robot_vy.push_back(aux_vy);
+	}
+
+	
 
 	for(int i = 0; i < (int)joints.size()-1; i++)
 		if(joints.at(i)->getJointChangeDirection())
@@ -57,11 +71,7 @@ double Fitness::calcFitness()
 	{
 		double * final_location = robot_position.back();
 		double * initial_location = robot_position.front();
-
-		clog << endl;
-		for(int i = 0; i < (int)jdcns.size(); i++)
-			clog << "JDCNS " << i << ":\t" << jdcns.at(i) << endl; 
-		
+				
 		vector < double > freq ((int)(N_LEGS + GRA_LIB_EXT),0.0);
 
 		for(int i = 0; i < N_LEGS; i++)
@@ -99,6 +109,9 @@ void Fitness::resetPopulationValues()
 	robot_position.clear();
 	robot_vx.clear();
 	robot_vy.clear();
+	robot_walpha.clear();
+
+	iteration = 0;
 }
 
 void Fitness::resetGenerationValues()
@@ -148,9 +161,23 @@ string Fitness::getFitnessResults()
 
 	results << endl;
 
-	for(int i = 0; i < (int)fitness.size(); i++)
-		results << "Fitness " << i << ":\t" << fitness.at(i) << endl;
 
+	// results << "distance \t" << fitness.at(0) << endl;
+	// results << "frecuency \t" << fitness.at(1) << endl;
+	// results << "var vel x\t" << fitness.at(2) << endl;
+	// results << "var vel y\t" << fitness.at(3) << endl;
+	// results << "vaw W\t" << fitness.at(4) << endl;
+	// results << "|W|\t" << fitness.at(5) << endl;
+	// results << "mean W: " << mean(robot_walpha) << endl;
+	// results << "Fitness final:\t" << final_fitness << endl << endl;
+
+	results << "fitness distance \t" << fitness.at(0) << endl;
+	results << "fitness frecuency \t" << fitness.at(1) << endl;
+	results << "var Vx\t" << fitness.at(2) << endl;
+	results << "var Vy\t" << fitness.at(3) << endl;
+	results << "distance: " << distance << endl;
+	results << "mean Vx: " << mean(robot_vx) << endl;
+	results << "mean Vy: " << mean(robot_vy) << endl;
 	results << "Fitness final:\t" << final_fitness << endl << endl;
 
 	return results.str();

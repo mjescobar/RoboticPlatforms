@@ -32,6 +32,7 @@ public:
 	void addFileResults(Fitness * fitness, int generation, int population);
 	void addFileResults(double best_fitness);
 	void addFileFitness(Fitness * fitness, int generation);
+	void addFileFitness(vector < Fitness * > fitness, int generation);
 	void addFileFrecuency(Fitness * fitness, int generation);
 
 	void openNewJointsPositionFile(int generation, int population);

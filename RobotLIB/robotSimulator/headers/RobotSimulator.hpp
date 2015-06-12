@@ -52,6 +52,16 @@ namespace ANN_USM
 		 * \param ip The ip address where VREP is located.
 		 */
 		void simStart(const char * ip);
+		/**
+		 * \brief Starts a communication thread with VREP through specific ip address and port.
+		 * \param ip The ip address where VREP is located.
+		 */
+		 void simStart(const char * ip, int port);
+		 /**
+		 * \brief Starts a communication thread with VREP through specific port.
+		 * \param ip The ip address where VREP is located.
+		 */
+		 void simStart(int port);
 
 		/**
 		 * \brief Ends the communication thread.

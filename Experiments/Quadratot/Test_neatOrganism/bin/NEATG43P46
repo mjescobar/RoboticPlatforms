@@ -1,0 +1,84 @@
+{
+	"Genetic_Encoding":
+	{
+		"row_order":
+		[
+			0,2,1
+		]
+		"nodes":
+		[
+			{"exist": 1,"node": 0,"type": 0, "row": 0, "function": "sin"},
+			{"exist": 1,"node": 1,"type": 0, "row": 0, "function": "sigmoid"},
+			{"exist": 1,"node": 2,"type": 0, "row": 0, "function": "sigmoid"},
+			{"exist": 1,"node": 3,"type": 0, "row": 0, "function": "sin"},
+			{"exist": 1,"node": 4,"type": 0, "row": 0, "function": "sin"},
+			{"exist": 1,"node": 5,"type": 2, "row": 1, "function": "sigmoid"},
+			{"exist": 1,"node": 6,"type": 2, "row": 1, "function": "sigmoid"},
+			{"exist": 0},
+			{"exist": 1,"node": 8,"type": 1, "row": 2, "function": "gaussian"}
+		],
+		"connection_genes":
+		[
+			{"exist": 1,"innovation": 0,"in": 0,"out": 5,"weight": -0.9658,"enable": 1},
+			{"exist": 1,"innovation": 1,"in": 1,"out": 5,"weight": -0.316895,"enable": 0},
+			{"exist": 1,"innovation": 2,"in": 2,"out": 5,"weight": -0.330032,"enable": 1},
+			{"exist": 1,"innovation": 3,"in": 3,"out": 5,"weight": -0.418875,"enable": 1},
+			{"exist": 1,"innovation": 4,"in": 4,"out": 5,"weight": -0.920192,"enable": 1},
+			{"exist": 1,"innovation": 5,"in": 0,"out": 6,"weight": 0.3342,"enable": 1},
+			{"exist": 1,"innovation": 6,"in": 1,"out": 6,"weight": -0.0512517,"enable": 1},
+			{"exist": 1,"innovation": 7,"in": 2,"out": 6,"weight": -0.826553,"enable": 1},
+			{"exist": 1,"innovation": 8,"in": 3,"out": 6,"weight": 0.190606,"enable": 1},
+			{"exist": 1,"innovation": 9,"in": 4,"out": 6,"weight": 0.330844,"enable": 1},
+			{"exist": 0},
+			{"exist": 0},
+			{"exist": 0},
+			{"exist": 0},
+			{"exist": 0},
+			{"exist": 0},
+			{"exist": 0},
+			{"exist": 0},
+			{"exist": 0},
+			{"exist": 0},
+			{"exist": 0},
+			{"exist": 0},
+			{"exist": 0},
+			{"exist": 0},
+			{"exist": 0},
+			{"exist": 0},
+			{"exist": 0},
+			{"exist": 0},
+			{"exist": 0},
+			{"exist": 0},
+			{"exist": 0},
+			{"exist": 0},
+			{"exist": 0},
+			{"exist": 0},
+			{"exist": 0},
+			{"exist": 0},
+			{"exist": 0},
+			{"exist": 0},
+			{"exist": 0},
+			{"exist": 0},
+			{"exist": 0},
+			{"exist": 0},
+			{"exist": 0},
+			{"exist": 0},
+			{"exist": 0},
+			{"exist": 0},
+			{"exist": 0},
+			{"exist": 0},
+			{"exist": 0},
+			{"exist": 0},
+			{"exist": 0},
+			{"exist": 0},
+			{"exist": 0},
+			{"exist": 0},
+			{"exist": 0},
+			{"exist": 0},
+			{"exist": 0},
+			{"exist": 0},
+			{"exist": 1,"innovation": 58,"in": 1,"out": 8,"weight": 1,"enable": 1},
+			{"exist": 1,"innovation": 59,"in": 8,"out": 5,"weight": -0.316895,"enable": 1}
+		]
+	}
+}

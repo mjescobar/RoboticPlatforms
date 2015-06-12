@@ -2,7 +2,7 @@ EXECUTABLE = Argo
 VPATH = ./src ./headers 
 CC = g++ -O3
 CFLAGS = -g -Wall -I./src -I./headers -DNON_MATLAB_PARSING -DMAX_EXT_API_CONNECTIONS=255
-LDFLAGS = -lpthread -L. -lhyperneat -lrobotlib -lneat
+LDFLAGS = -lpthread -L. -lhyperneat -lrobotlib
 DATE = `date +'%F--%T'`
 VAR = ./saveTrains/$(DATE)
 
@@ -15,8 +15,6 @@ all: Argo.o CalcFunctions.o Fitness.o SimFiles.o
 	@mkdir -p bin/simulation_files/joints_position_real
 	@mkdir -p bin/simulation_files/joints_position_filtered
 	@mkdir -p bin/NEAT_organisms
-	@mkdir -p bin/NEAT_organisms/all
-	@mkdir -p bin/NEAT_organisms/champions
 	@rm -f ./bin/test
 	@rm -f ./bin/functions_files/*
 	@rm -f ./bin/error_files/*
@@ -25,8 +23,7 @@ all: Argo.o CalcFunctions.o Fitness.o SimFiles.o
 	@rm -f ./bin/simulation_files/joints_position_real/*
 	@rm -f ./bin/simulation_files/joints_position_filtered/*
 	@rm -f ./bin/simulation_files/*.txt
-	@rm -f ./bin/NEAT_organisms/all/*
-	@rm -f ./bin/NEAT_organisms/champions/*	
+	@rm -f ./bin/NEAT_organisms/*
 	@echo "Linking all objects to ./bin/Argo"
 	@$(CC) $(CFLAGS) ./objects/Fitness.o ./objects/SimFiles.o ./objects/CalcFunctions.o ./objects/Argo.o -o ./bin/$(EXECUTABLE) $(LDFLAGS)
 
@@ -51,7 +48,6 @@ SimFiles.o: SimFiles.cpp
 	@$(CC) $(CFLAGS) -c ./src/SimFiles.cpp -o ./objects/SimFiles.o
 
 clean:
-	@echo "Cleaning"
 	@rm -f -R ./objects
 	@rm -f ./bin/$(EXECUTABLE)
 	@rm -f ./bin/test
@@ -63,5 +59,9 @@ clean:
 save:
 	@mkdir -p $(VAR); cp -R ./bin/* $(VAR);
 
+<<<<<<< HEAD
 run: 
+=======
+run:
+>>>>>>> bfce745ac7dba25d4b22fc1c66f8e353175b244b
 	cd bin; ./Argo mo_argo.json user_def genetic_encoding
