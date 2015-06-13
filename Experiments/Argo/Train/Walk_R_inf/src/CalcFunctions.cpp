@@ -103,4 +103,27 @@ int min(vector< int > numbers)
 	return aux;
 }
 
+double max(vector< double > numbers)
+{
+	if((int)numbers.size() == 0) return 0.0;
+
+	double aux = numbers.front();
+
+	for(int i = 1; i < (int)numbers.size(); i++)
+		if(numbers.at(i) > aux) aux = numbers.at(i);
+
+	return aux;
+}
+
+int max(vector< int > numbers)
+{
+	if((int)numbers.size() == 0) return 0.0;
+
+	int aux = numbers.front();
+
+	for(int i = 1; i < (int)numbers.size(); i++)
+		if(numbers.at(i) > aux) aux = numbers.at(i);
+
+	return aux;
+}
 #endif

@@ -51,6 +51,9 @@ void * calcOrganismFitness(void * arg)
 		center_dummys.at(segmento)->getOrientation(-1, NULL);
 		//
 
+		// clog << endl << "Press intro to start Simulation . . ." << endl;
+		// cin.get();
+
 		simulators.at(segmento)->simStartSimulation(simx_opmode_oneshot_wait);
 
 		message1 << "Generation " << currentGeneration << " Population " << p;
@@ -84,7 +87,7 @@ void * calcOrganismFitness(void * arg)
 
 				simulators.at(segmento)->simPauseCommunication(0);
 
-				for(int i = 4; i < (int)body_partss.at(segmento).size(); i++)
+				for(int i = 0; i < (int)body_partss.at(segmento).size(); i++)
 				{
 					if(body_partss.at(segmento).at(i)->getCollisionState() != 0)
 					{
@@ -233,7 +236,7 @@ int main(int argc, char * argv[])
 			joints.push_back(new Joint(simulators.at(i), (char*)joint.str().c_str(), max_angle_limit[k], min_angle_limit[k], (char*)"SCALE"));
 		}
 
-		for(int k = 0; k < 17; k++)
+		for(int k = 0; k < 16; k++)
 		{
 			stringstream body_part;
 			body_part << "Collision" << k << "#";

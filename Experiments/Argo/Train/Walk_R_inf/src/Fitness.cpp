@@ -99,6 +99,11 @@ double Fitness::calcFitness()
 
 void Fitness::resetPopulationValues()
 {
+	// for(int i = 0; i < (int)robot_vx.size(); i++)
+	// 	clog << "VX:\t" << robot_vx.at(i) << "\tVY:\t" << robot_vy.at(i) << endl;
+	// clog << endl <<  "VX_MIN:\t" << min(robot_vx) << "\tVX_MAX:\t" << max(robot_vx) << endl;
+	// clog <<  "VY_MIN:\t" << min(robot_vy) << "\tVY_MAX:\t" << max(robot_vy) << endl;
+
 	jdcn = 0;
 	jdcns = vector < int > ((int)(N_LEGS + GRA_LIB_EXT),0);
 	fitness = vector < double > (4,FAILED_FITNESS);

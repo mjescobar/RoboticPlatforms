@@ -57,6 +57,8 @@ class Fitness
 	vector < double > robot_walpha;
 	vector < double > generation_frecuency;
 	vector < double > generation_fitness;
+	
+	// int iteration;
 
 public:
 

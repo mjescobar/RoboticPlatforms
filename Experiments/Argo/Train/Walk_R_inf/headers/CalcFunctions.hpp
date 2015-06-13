@@ -16,6 +16,8 @@ using namespace std;
 	double stdDesviation(vector < int > numbers);
 	double min(vector < double > numbers);
 	int min(vector < int > numbers);
+	double max(vector < double > numbers);
+	int max(vector < int > numbers);
 //}
 
 #endif

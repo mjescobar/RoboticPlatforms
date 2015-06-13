@@ -64,4 +64,4 @@ save:
 	@mkdir -p $(VAR); cp -R ./bin/* $(VAR);
 
 run: 
-	cd bin; ./Argo mo_argo.json user_def genetic_encoding
+	cd bin; ./Argo mo_argo.json user_def genetic_encoding VrepsList

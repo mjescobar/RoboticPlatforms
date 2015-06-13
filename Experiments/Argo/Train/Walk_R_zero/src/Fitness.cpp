@@ -22,16 +22,29 @@ Fitness::~Fitness()
 void Fitness::measuringValues(vector < Joint * > joints, Dummy * dummy)
 {
 	double * position = new double[3];
-	double * lVelocity = new double[3];
-	double * aVelocity = new double[3];
+	// double * lVelocity = new double[3];
+	// double * aVelocity = new double[3];
 
 	dummy->getPosition(-1, position);
-	dummy->getVelocity(lVelocity, aVelocity);
+	// dummy->getVelocity(lVelocity, aVelocity);
 
 	robot_position.push_back(position);
-	robot_vx.push_back(lVelocity[0]);
-	robot_vy.push_back(lVelocity[1]);
-	robot_walpha.push_back(aVelocity[0]);
+	// robot_vx.push_back(lVelocity[0]);
+	// robot_vy.push_back(lVelocity[1]);
+	// robot_walpha.push_back(aVelocity[0]);
+
+	// if (iteration < 4)
+	// {
+	// 	iteration++;
+	// }
+	// else
+	// {
+	// 	iteration = 0;
+	// 	double aux_vx = (robot_position.back()[0] - (robot_position.end()[-4])[0])/(3*DELTA_T);
+	// 	double aux_vy = (robot_position.back()[1] - (robot_position.end()[-4])[1])/(3*DELTA_T);
+	// 	robot_vx.push_back(aux_vx);
+	// 	robot_vy.push_back(aux_vy);
+	// }
 
 	/*
 	for(int i = 0; i < (int)joints.size(); i++)
