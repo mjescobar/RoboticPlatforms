@@ -42,6 +42,8 @@ using namespace std;
 #define ANGULAR_VELOCITY_FITNESS_F(X) (double)(exp(-pow((X - ANGULAR_VELOCITY_OBJETIVE)/ANGULAR_STDD, 2.0)/2.0)*AMPLITUDE + 0.000001)
 #define ANGULAR_VELOCITY_FITNESS(X) (double)((X < ANGULAR_VELOCITY_OBJETIVE) ? ANGULAR_VELOCITY_FITNESS_F(X) : AMPLITUDE + 0.000001)
 
+#define CHANGE_FITNESS_GENERATION 30
+
 class Fitness
 {
 	int jdcn;
@@ -67,8 +69,8 @@ public:
 	~Fitness();
 
 	void measuringValues(vector < Joint * > joints, Dummy * dummy);
-	double calcFitness();
-	void resetPopulationValues();
+	double calcFitness(int generation);
+	void resetPopulationValues(int generation);
 	void resetGenerationValues();
 	double getFrecuency();
 	double getFitness();
@@ -77,7 +79,7 @@ public:
 	vector < double > getGenerationFitness();
 	double getFrecuencyThreshold();
 	double getJointDirectionChangeNumber();
-	string getFitnessResults();
+	string getFitnessResults(int generation);
 
 };
 

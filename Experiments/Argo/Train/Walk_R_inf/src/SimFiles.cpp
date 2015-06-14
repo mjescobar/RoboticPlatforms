@@ -20,7 +20,7 @@ SimFiles::~SimFiles()
 void SimFiles::addFileResults(Fitness * fitness, int generation, int population)	
 {	
 	file_results << "======================================  G" << generation << " P" << population <<endl;
-	file_results << fitness->getFitnessResults() << endl;
+	file_results << fitness->getFitnessResults(generation) << endl;
 }
 
 void SimFiles::addFileResults(double best_fitness)

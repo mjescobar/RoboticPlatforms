@@ -52,13 +52,14 @@ class Fitness
 	double distance;
 
 	vector < double * > robot_position;
+	vector < double > robot_orientation;
 	vector < double > robot_vx;
 	vector < double > robot_vy;
-	vector < double > robot_walpha;
+	vector < double > robot_wgamma;
 	vector < double > generation_frecuency;
 	vector < double > generation_fitness;
 	
-	// int iteration;
+	int iteration;
 
 public:
 

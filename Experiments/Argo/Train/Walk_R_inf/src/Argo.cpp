@@ -31,7 +31,7 @@ void * calcOrganismFitness(void * arg)
 		bool flag = true;
 		stringstream message1, message2;
 		vector < double > sum_next ((int)jointss.at(segmento).size(),0.0);
-		fitnesss.at(segmento)->resetPopulationValues();
+		fitnesss.at(segmento)->resetPopulationValues(currentGeneration);
 
 
 		if(!hyperneats.at(segmento)->CreateSubstrateConnections( &cppn_neat->organisms.at( p ) )   ) continue;
@@ -113,10 +113,10 @@ void * calcOrganismFitness(void * arg)
 
 		if(flag)
 		{						
-			fitnesss.at(segmento)->calcFitness();
+			fitnesss.at(segmento)->calcFitness(currentGeneration);
 
 			clog << "======================================  G" << currentGeneration << " P" << p <<endl;
-			clog << fitnesss.at(segmento)->getFitnessResults() << endl;
+			clog << fitnesss.at(segmento)->getFitnessResults(currentGeneration) << endl;
 
 
 

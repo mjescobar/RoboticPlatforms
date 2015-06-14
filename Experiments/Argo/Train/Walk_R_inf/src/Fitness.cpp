@@ -7,7 +7,7 @@ Fitness::Fitness()
 {
 	jdcn = 0;
 	jdcns = vector < int > ((int)(N_LEGS + GRA_LIB_EXT),0);
-	fitness = vector < double > (4,FAILED_FITNESS);
+	fitness = vector < double > (2,FAILED_FITNESS);
 
 	frecuency = 0;
 	final_fitness = FAILED_FITNESS;
@@ -65,7 +65,7 @@ void Fitness::measuringValues(vector < Joint * > joints, Dummy * dummy)
 	}
 }
 
-double Fitness::calcFitness()
+double Fitness::calcFitness(int generation)
 {	
 	if(jdcn != 0)
 	{
@@ -84,8 +84,13 @@ double Fitness::calcFitness()
 
 		fitness.at(0) = DISTANCE_FITNESS(distance);
 		fitness.at(1) = frecuency;
-		fitness.at(2) = VAR_FITNESS(var(robot_vx));
-		fitness.at(3) = VAR_FITNESS(var(robot_vy));
+
+		if(generation >= CHANGE_FITNESS_GENERATION)
+		{
+			fitness.at(2) = VAR_FITNESS(var(robot_vx));
+			fitness.at(3) = VAR_FITNESS(var(robot_vy));	
+		}
+		
 		
 		final_fitness = min(fitness);
 
@@ -97,7 +102,7 @@ double Fitness::calcFitness()
 	return final_fitness;		
 }
 
-void Fitness::resetPopulationValues()
+void Fitness::resetPopulationValues(int generation)
 {
 	// for(int i = 0; i < (int)robot_vx.size(); i++)
 	// 	clog << "VX:\t" << robot_vx.at(i) << "\tVY:\t" << robot_vy.at(i) << endl;
@@ -106,7 +111,11 @@ void Fitness::resetPopulationValues()
 
 	jdcn = 0;
 	jdcns = vector < int > ((int)(N_LEGS + GRA_LIB_EXT),0);
-	fitness = vector < double > (4,FAILED_FITNESS);
+	
+	if(generation >= CHANGE_FITNESS_GENERATION)
+		fitness = vector < double > (4,FAILED_FITNESS);
+	else
+		fitness = vector < double > (2,FAILED_FITNESS);
 
 	frecuency = 0;
 	final_fitness = FAILED_FITNESS;
@@ -160,7 +169,7 @@ double Fitness::getJointDirectionChangeNumber()
 	return jdcn;
 }
 
-string Fitness::getFitnessResults()
+string Fitness::getFitnessResults(int generation)
 {
 	stringstream results;
 
@@ -176,14 +185,25 @@ string Fitness::getFitnessResults()
 	// results << "mean W: " << mean(robot_walpha) << endl;
 	// results << "Fitness final:\t" << final_fitness << endl << endl;
 
-	results << "fitness distance \t" << fitness.at(0) << endl;
-	results << "fitness frecuency \t" << fitness.at(1) << endl;
-	results << "var Vx\t" << fitness.at(2) << endl;
-	results << "var Vy\t" << fitness.at(3) << endl;
-	results << "distance: " << distance << endl;
-	results << "mean Vx: " << mean(robot_vx) << endl;
-	results << "mean Vy: " << mean(robot_vy) << endl;
-	results << "Fitness final:\t" << final_fitness << endl << endl;
+	if(generation >= CHANGE_FITNESS_GENERATION)
+	{
+		results << "fitness distance \t" << fitness.at(0) << endl;
+		results << "fitness frecuency \t" << fitness.at(1) << endl;
+		results << "var Vx\t" << fitness.at(2) << endl;
+		results << "var Vy\t" << fitness.at(3) << endl;
+		results << "distance: " << distance << endl;
+		results << "mean Vx: " << mean(robot_vx) << endl;
+		results << "mean Vy: " << mean(robot_vy) << endl;
+		results << "Fitness final:\t" << final_fitness << endl << endl;	
+	}
+	else
+	{
+		results << "fitness distance \t" << fitness.at(0) << endl;
+		results << "fitness frecuency \t" << fitness.at(1) << endl;
+		results << "distance: " << distance << endl;
+		results << "Fitness final:\t" << final_fitness << endl << endl;	
+	}
+	
 
 	return results.str();
 }

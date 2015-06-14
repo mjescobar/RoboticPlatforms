@@ -22,29 +22,30 @@ Fitness::~Fitness()
 void Fitness::measuringValues(vector < Joint * > joints, Dummy * dummy)
 {
 	double * position = new double[3];
+	double * orientation = new double[3];
 	// double * lVelocity = new double[3];
 	// double * aVelocity = new double[3];
 
 	dummy->getPosition(-1, position);
+	dummy->getOrientation(-1,orientation);
 	// dummy->getVelocity(lVelocity, aVelocity);
 
 	robot_position.push_back(position);
+	robot_orientation.push_back(orientation[2]);
 	// robot_vx.push_back(lVelocity[0]);
 	// robot_vy.push_back(lVelocity[1]);
 	// robot_walpha.push_back(aVelocity[0]);
 
-	// if (iteration < 4)
-	// {
-	// 	iteration++;
-	// }
-	// else
-	// {
-	// 	iteration = 0;
-	// 	double aux_vx = (robot_position.back()[0] - (robot_position.end()[-4])[0])/(3*DELTA_T);
-	// 	double aux_vy = (robot_position.back()[1] - (robot_position.end()[-4])[1])/(3*DELTA_T);
-	// 	robot_vx.push_back(aux_vx);
-	// 	robot_vy.push_back(aux_vy);
-	// }
+	if (iteration < 4)
+	{
+		iteration++;
+	}
+	else
+	{
+		iteration = 0;
+		double aux_wgamma = (robot_orientation.back() - robot_orientation.end()[-4])/(3*DELTA_T);
+		robot_wgamma.push_back(aux_wgamma);
+	}
 
 	/*
 	for(int i = 0; i < (int)joints.size(); i++)
@@ -94,7 +95,7 @@ double Fitness::calcFitness()
 
 		fitness.at(0) = DISTANCE_FITNESS(distance);
 		fitness.at(1) = frecuency;
-		fitness.at(2) = ANGULAR_VELOCITY_FITNESS(mean(robot_walpha));
+		fitness.at(2) = ANGULAR_VELOCITY_FITNESS(mean(robot_wgamma));
 		
 		final_fitness = min(fitness);
 
@@ -118,7 +119,7 @@ void Fitness::resetPopulationValues()
 	robot_position.clear();
 	robot_vx.clear();
 	robot_vy.clear();
-	robot_walpha.clear();
+	robot_wgamma.clear();
 }
 
 void Fitness::resetGenerationValues()
@@ -184,7 +185,7 @@ string Fitness::getFitnessResults()
 	results << "distance: " << distance << endl;
 	results << "mean Vx: " << mean(robot_vx) << endl;
 	results << "mean Vy: " << mean(robot_vy) << endl;
-	results << "mean W: " << mean(robot_walpha) << endl;
+	results << "mean W: " << mean(robot_wgamma) << endl;
 	results << "Fitness final:\t" << final_fitness << endl << endl;
 
 	return results.str();
