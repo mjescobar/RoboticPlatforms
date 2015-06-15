@@ -10,7 +10,7 @@ int main(int argc, char* argv[])
 	SimFiles * simfile = new SimFiles(); 
 	RobotSimulator * simulator = new RobotSimulator();
 
-	if(argc < 4)
+	if(argc < 3)
 	{
 		cerr << "ERROR: The number of arguments is incorrect" << endl;
 		return -1;	
@@ -56,7 +56,7 @@ int main(int argc, char* argv[])
 		pass.push_back(aux_pass);
 	}
 
-	HyperNeat * hyperneat = new HyperNeat(pass, next, argv[1], argv[2], argv[3]);
+	HyperNeat * hyperneat = new HyperNeat(pass, next, argv[1], 2);
 
 	// ================================================ //
 	
@@ -69,7 +69,10 @@ int main(int argc, char* argv[])
 		simfile->openNewJointsPositionFile(0, 0);
 		simfile->openNewRobotPositionFile(0, 0);
 
-		if(!hyperneat->CreateSubstrateConnections(argv[3]))
+		Genetic_Encoding * organism = new Genetic_Encoding;
+		organism->load(argv[2]);
+
+		if(!hyperneat->CreateSubstrateConnections(organism))
 		{
 			clog << "ERROR: Neat organism has not created substrate connections successfully" << endl;
 			return(0);

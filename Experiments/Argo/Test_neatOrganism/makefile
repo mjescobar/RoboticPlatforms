@@ -2,7 +2,7 @@ EXECUTABLE = Argo
 VPATH = ./src ./headers 
 CC = g++ -O3
 CFLAGS = -g -Wall -I./src -I./headers  -DNON_MATLAB_PARSING -DMAX_EXT_API_CONNECTIONS=255
-LDFLAGS = -lpthread -L. -lhyperneat -lrobotlib
+LDFLAGS = -lpthread -L. -lhyperneat -lrobotlib -lneat
 DATE = `date +'%F--%T'`
 VAR = ./saveTrains/$(DATE)
 
